@@ -15,6 +15,7 @@ addons:
         - flex
         - libreadline-dev
         - zlib1g-dev
+        - liblz4-dev
         - libzstd-dev
         - libssl-dev
         - perl

@@ -1154,7 +1154,15 @@ compress_init(ProbackupSubcmd const subcmd)
 												"compress-algorithm option");
 	}
 
-	if (instance_config.compress_level < 0 || instance_config.compress_level > 9)
+	/* Validate compression level based on algorithm */
+	if (instance_config.compress_alg == LZ4_COMPRESS)
+	{
+		if (instance_config.compress_level < 0 ||
+			instance_config.compress_level > LZ4_COMPRESS_LEVEL_MAX)
+			elog(ERROR, "--compress-level for LZ4 must be in range 0-%d",
+				 LZ4_COMPRESS_LEVEL_MAX);
+	}
+	else if (instance_config.compress_level < 0 || instance_config.compress_level > 9)
 		elog(ERROR, "--compress-level value must be in the range from 0 to 9");
 
 	if (instance_config.compress_alg == ZLIB_COMPRESS && instance_config.compress_level == 0)
@@ -1165,6 +1173,11 @@ compress_init(ProbackupSubcmd const subcmd)
 #ifndef HAVE_LIBZ
 		if (instance_config.compress_alg == ZLIB_COMPRESS)
 			elog(ERROR, "This build does not support zlib compression");
+		else
+#endif
+#ifndef HAVE_LIBLZ4
+		if (instance_config.compress_alg == LZ4_COMPRESS)
+			elog(ERROR, "This build does not support LZ4 compression");
 		else
 #endif
 		if (instance_config.compress_alg == PGLZ_COMPRESS && num_threads > 1)
