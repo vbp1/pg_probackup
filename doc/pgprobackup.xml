@@ -3014,7 +3014,7 @@ content-crc = 802820606
         <listitem>
         <para>
           <literal>compress-alg</literal> — compression algorithm used during backup. Possible values:
-          <literal>zlib</literal>, <literal>pglz</literal>, <literal>none</literal>.
+          <literal>zlib</literal>, <literal>pglz</literal>, <literal>lz4</literal>, <literal>none</literal>.
         </para>
         </listitem>
         <listitem>
@@ -5885,11 +5885,15 @@ pg_probackup catchup -b <replaceable>catchup_mode</replaceable>
       <para>
         Defines the algorithm to use for compressing data files.
         Possible values are <literal>zlib</literal>,
-        <literal>pglz</literal>, and <literal>none</literal>. If set
-        to <literal>zlib</literal> or <literal>pglz</literal>, this option enables compression. By default,
+        <literal>pglz</literal>, <literal>lz4</literal>, and <literal>none</literal>. If set
+        to <literal>zlib</literal>, <literal>pglz</literal>, or <literal>lz4</literal>, this option enables compression. By default,
         compression is disabled. For the
         <xref linkend="pbk-archive-push"/> command, the
-        <literal>pglz</literal> compression algorithm is not supported.
+        <literal>pglz</literal> and <literal>lz4</literal> compression algorithms are not supported.
+      </para>
+      <para>
+        The <literal>lz4</literal> algorithm requires the <literal>liblz4</literal> library
+        to be installed at build time.
       </para>
       <para>
        Default: <literal>none</literal>
@@ -5901,9 +5905,11 @@ pg_probackup catchup -b <replaceable>catchup_mode</replaceable>
 <term><option>--compress-level=<replaceable>compression_level</replaceable></option></term>
       <listitem>
       <para>
-        Defines compression level (0 through 9, 0 being no compression
-        and 9 being best compression). This option can be used
-        together with the <option>--compress-algorithm</option> option.
+        Defines compression level. For <literal>zlib</literal> and <literal>pglz</literal>,
+        valid values are 0 through 9 (0 being no compression and 9 being best compression).
+        For <literal>lz4</literal>, valid values are 0 through 12: level 0 uses fast LZ4 compression,
+        levels 1-12 use LZ4_HC (high compression) mode with increasing compression ratio.
+        This option can be used together with the <option>--compress-algorithm</option> option.
       </para>
       <para>
        Default: <literal>1</literal>
