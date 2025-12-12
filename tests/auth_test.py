@@ -4,12 +4,14 @@ The Test suite check behavior of pg_probackup utility, if password is required f
 """
 
 import os
-import unittest
 import signal
 import time
+import unittest
 
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 from testgres import StartNodeException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 module_name = 'auth_test'
 skip_test = False
@@ -269,7 +271,7 @@ class AuthTest(unittest.TestCase):
         if (self.pgpass_file_lock
             and hasattr(self, "pgpass_line")
             and os.path.exists(self.pgpass_file)):
-            with open(self.pgpass_file, 'r', encoding="utf-8") as fl:
+            with open(self.pgpass_file, encoding="utf-8") as fl:
                 lines = fl.readlines()
             if self.pgpass_line in lines:
                 lines.remove(self.pgpass_line)
@@ -370,7 +372,7 @@ class AuthTest(unittest.TestCase):
 
     def run_pb_with_auth(self, password=None, add_args = [], kill=False):
         with spawn(self.pb.probackup_path, self.pb_cmd + add_args, encoding='utf-8', timeout=10) as probackup:
-            result = probackup.expect(u"Password for user .*:", 5)
+            result = probackup.expect("Password for user .*:", 5)
             if kill:
                 probackup.kill(signal.SIGINT)
             elif result == 0:

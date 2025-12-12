@@ -1,11 +1,11 @@
 import re
-import unittest
-import functools
 import time
+import unittest
+
 
 def _tail_file(file, linetimeout, totaltimeout):
     start = time.time()
-    with open(file, 'r') as f:
+    with open(file) as f:
         waits = 0
         while waits < linetimeout:
             line = f.readline()
@@ -21,7 +21,7 @@ def _tail_file(file, linetimeout, totaltimeout):
             raise TimeoutError("line timeout tailing %s" % (file,))
 
 
-class tail_file(object): # snake case to immitate function
+class tail_file: # snake case to immitate function
     def __init__(self, filename, *, linetimeout=10, totaltimeout=60, collect=False):
         self.filename = filename
         self.tailer = _tail_file(filename, linetimeout, totaltimeout)

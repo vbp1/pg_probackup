@@ -1,8 +1,9 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 import subprocess
+import unittest
 from time import sleep
+
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class TimeStamp(ProbackupTest, unittest.TestCase):
@@ -71,7 +72,7 @@ class TimeStamp(ProbackupTest, unittest.TestCase):
 
         self.backup_node(
             backup_dir, 'node', node, options=['--stream', '-j 2'])
-        
+
     def test_handling_of_TZ_env_variable(self):
         """Issue #284"""
         node = self.make_simple_node(

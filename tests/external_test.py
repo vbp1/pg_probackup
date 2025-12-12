@@ -1,9 +1,9 @@
-import unittest
 import os
-from time import sleep
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from .helpers.cfs_helpers import find_by_name
 import shutil
+import unittest
+from time import sleep
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 # TODO: add some ptrack tests
@@ -181,8 +181,7 @@ class ExternalTest(ProbackupTest, unittest.TestCase):
                         external_dir1,
                         self.EXTERNAL_DIRECTORY_DELIMITER,
                         external_dir2,
-                        self.EXTERNAL_DIRECTORY_DELIMITER,
-                        external_dir1)])
+                        )])
             # we should die here because exception is what we expect to happen
             self.assertEqual(
                 1, 0,
@@ -2320,7 +2319,7 @@ class ExternalTest(ProbackupTest, unittest.TestCase):
             options=['--no-validate', '--log-level-file=VERBOSE'])
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
             logfile_content = f.read()
 
         # get delta between FULL and PAGE filelists

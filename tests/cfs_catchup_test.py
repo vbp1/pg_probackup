@@ -1,10 +1,8 @@
 import os
 import unittest
-import random
-import shutil
 
-from .helpers.cfs_helpers import find_by_extensions, find_by_name, find_by_pattern, corrupt_file
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+from .helpers.cfs_helpers import find_by_extensions
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class CfsCatchupNoEncTest(ProbackupTest, unittest.TestCase):

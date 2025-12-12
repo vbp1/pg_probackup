@@ -1,7 +1,7 @@
-import unittest
 import os
-from time import sleep
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class LockingTest(ProbackupTest, unittest.TestCase):
@@ -606,7 +606,7 @@ class LockingTest(ProbackupTest, unittest.TestCase):
         self.assertFalse(
             os.path.exists(lockfile_shr),
             "File should not exist: {0}".format(lockfile_shr))
-        
+
         gdb = self.validate_pb(backup_dir, 'node', backup_id, gdb=True)
 
         gdb.set_breakpoint('validate_one_page')
@@ -616,7 +616,7 @@ class LockingTest(ProbackupTest, unittest.TestCase):
         self.assertTrue(
             os.path.exists(lockfile_shr),
             "File should exist: {0}".format(lockfile_shr))
-        
+
         self.validate_pb(backup_dir, 'node', backup_id)
 
         self.assertFalse(

@@ -1,6 +1,7 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class ShowTest(ProbackupTest, unittest.TestCase):

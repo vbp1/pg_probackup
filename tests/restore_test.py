@@ -1,16 +1,15 @@
-import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-import subprocess
-import sys
-from datetime import datetime, timedelta, timezone
-import hashlib
-import shutil
 import json
+import os
+import shutil
 import stat
+import subprocess
+import unittest
+from datetime import datetime, timedelta, timezone
 from shutil import copyfile
+
 from testgres import QueryException, StartNodeException
-from stat import S_ISDIR
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class RestoreTest(ProbackupTest, unittest.TestCase):
@@ -52,7 +51,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
@@ -1462,7 +1461,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         node_restored.slow_start()
 
         while True:
-            with open(node_restored.pg_log_file, 'r') as f:
+            with open(node_restored.pg_log_file) as f:
                 if 'selected new timeline ID' in f.read():
                     break
 
@@ -1519,7 +1518,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='delta', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         # Take ERROR DELTA
@@ -1527,7 +1526,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='delta', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         # Take DELTA
@@ -1539,7 +1538,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='delta', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         self.assertEqual(
@@ -1603,7 +1602,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='page', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         # Take 1 DELTA
@@ -1615,7 +1614,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='delta', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         # Take 2 DELTA
@@ -1627,7 +1626,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.backup_node(
                 backup_dir, 'node', node,
                 backup_type='delta', options=['-U', 'wrong_name'])
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         # Take 3 DELTA
@@ -1837,7 +1836,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
@@ -1891,7 +1890,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
@@ -1903,7 +1902,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
         # For archive backup with immediate recovery target
         # recovery.conf is mandatory
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             self.assertIn("recovery_target = 'immediate'", f.read())
 
         # restore page backup
@@ -1913,7 +1912,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
         # For archive backup with immediate recovery target
         # recovery.conf is mandatory
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             self.assertIn("recovery_target = 'immediate'", f.read())
 
     # Skipped, because default recovery_target_timeline is 'current'
@@ -1950,7 +1949,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # hash_1 = hashlib.md5(
         #     open(recovery_conf, 'rb').read()).hexdigest()
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             content_1 = ''
             while True:
                 line = f.readline()
@@ -1967,7 +1966,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # hash_2 = hashlib.md5(
         #     open(recovery_conf, 'rb').read()).hexdigest()
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             content_2 = ''
             while True:
                 line = f.readline()
@@ -2003,7 +2002,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
@@ -2056,7 +2055,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
                 '--recovery-target-timeline=1',
                 ])
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_conf_content = f.read()
 
         self.assertIn(
@@ -2083,7 +2082,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
                 '--recovery-target-timeline=1',
                 ])
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_conf_content = f.read()
 
         self.assertIn(
@@ -2110,7 +2109,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
                 '--recovery-target-timeline=1',
                 ])
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_conf_content = f.read()
 
         self.assertIn(
@@ -2139,7 +2138,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
                     '--recovery-target-timeline=1',
                     ])
 
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 recovery_conf_content = f.read()
 
             self.assertIn(
@@ -2200,7 +2199,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             options=['--no-validate', '--log-level-file=VERBOSE'])
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
                 logfile_content = f.read()
 
         # get delta between FULL and PAGE filelists
@@ -2455,7 +2454,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node_restored_2.pg_log_file, 'r') as f:
+        with open(node_restored_2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -2574,7 +2573,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node_restored_2.pg_log_file, 'r') as f:
+        with open(node_restored_2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -2696,7 +2695,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node_restored_2.pg_log_file, 'r') as f:
+        with open(node_restored_2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -3297,7 +3296,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
@@ -3384,12 +3383,12 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         # TODO update test
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf = os.path.join(replica.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf, 'r') as f:
+            with open(recovery_conf) as f:
                 print(f.read())
         else:
             recovery_conf = os.path.join(replica.data_dir, 'recovery.conf')
 
-        with open(os.path.join(replica.data_dir, recovery_conf), 'r') as f:
+        with open(os.path.join(replica.data_dir, recovery_conf)) as f:
             recovery_conf_content = f.read()
 
         self.assertIn(str_conninfo, recovery_conf_content)
@@ -3921,7 +3920,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
-        with open(os.path.join(node.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(node.logs_dir, 'postgresql.log')) as f:
             if self.pg_config_version >= 120000:
                 self.assertIn(
                     "PANIC:  could not read file \"global/pg_control\"",

@@ -1,13 +1,15 @@
-# coding: utf-8
 
-import unittest
 import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from testgres import QueryException
 import shutil
-from datetime import datetime, timedelta
-import time
 import subprocess
+import time
+import unittest
+from datetime import datetime, timedelta
+
+from testgres import QueryException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class MergeTest(ProbackupTest, unittest.TestCase):
 
@@ -2186,7 +2188,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
             options=['--log-level-file=VERBOSE'])
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
                 logfile_content = f.read()
 
     def test_idempotent_merge(self):
@@ -2390,7 +2392,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                 "postgres",
                 "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")
@@ -2568,7 +2570,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
         gdb.continue_execution_until_error()
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
                 logfile_content = f.read()
 
         self.assertIn(
@@ -2614,7 +2616,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
         gdb.continue_execution_until_error()
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
                 logfile_content = f.read()
 
         self.assertIn(
@@ -2677,7 +2679,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
         gdb.continue_execution_until_exit()
 
         logfile = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(logfile, 'r') as f:
+        with open(logfile) as f:
                 logfile_content = f.read()
 
         self.assertNotIn(

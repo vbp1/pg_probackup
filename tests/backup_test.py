@@ -1,11 +1,13 @@
-import unittest
 import os
 import re
-from time import sleep, time
-from .helpers.ptrack_helpers import base36enc, ProbackupTest, ProbackupException
 import shutil
-from testgres import ProcessType, QueryException
 import subprocess
+import unittest
+from time import sleep, time
+
+from testgres import QueryException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest, base36enc
 
 
 class BackupTest(ProbackupTest, unittest.TestCase):
@@ -2623,13 +2625,13 @@ class BackupTest(ProbackupTest, unittest.TestCase):
         version = self.probackup_version
         fake_new_version = str(int(version.split('.')[0]) + 1) + '.0.0'
 
-        with open(control_file, 'r') as f:
-            data = f.read();
+        with open(control_file) as f:
+            data = f.read()
 
         data = data.replace(version, fake_new_version)
 
         with open(control_file, 'w') as f:
-            f.write(data);
+            f.write(data)
 
         try:
             self.backup_node(backup_dir, 'node', node, backup_type="page")
@@ -3059,7 +3061,7 @@ class BackupTest(ProbackupTest, unittest.TestCase):
         sleep(2)
         replica.promote()
 
-        # Delta backup        
+        # Delta backup
         try:
             self.backup_node(
                 backup_dir, 'node', replica, backup_type='delta',
@@ -3227,7 +3229,7 @@ class BackupTest(ProbackupTest, unittest.TestCase):
             backup_dir, 'node', replica, backup_type='page',
             data_dir=replica.data_dir, datname='backupdb', options=['-U', 'backup'],
             return_id=False)
-        
+
         self.assertIn(
             'WARNING: Valid full backup on current timeline 2 is not found, trying to look up on previous timelines',
             output)

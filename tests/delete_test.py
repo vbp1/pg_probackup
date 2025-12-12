@@ -1,7 +1,8 @@
-import unittest
 import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 import subprocess
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class DeleteTest(ProbackupTest, unittest.TestCase):
@@ -355,7 +356,7 @@ class DeleteTest(ProbackupTest, unittest.TestCase):
 
         with open(
             os.path.join(backup_dir, 'backups', 'node', backup_id, 'backup.control'),
-            'wt') as f:
+            'w') as f:
                 f.flush()
                 f.close()
 

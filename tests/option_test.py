@@ -1,7 +1,9 @@
-import unittest
-import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 import locale
+import os
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class OptionTest(ProbackupTest, unittest.TestCase):
 

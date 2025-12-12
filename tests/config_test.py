@@ -1,9 +1,8 @@
-import unittest
-import subprocess
 import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from sys import exit
+import unittest
 from shutil import copyfile
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class ConfigTest(ProbackupTest, unittest.TestCase):

@@ -1,9 +1,8 @@
-import unittest
-import subprocess
 import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from sys import exit
-import shutil
+import subprocess
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 def check_manual_tests_enabled():

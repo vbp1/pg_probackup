@@ -1,12 +1,11 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, idx_ptrack
-from datetime import datetime, timedelta
 import subprocess
+import unittest
 from time import sleep
-import shutil
-import signal
+
 from testgres import ProcessType
+
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class BugTest(ProbackupTest, unittest.TestCase):
