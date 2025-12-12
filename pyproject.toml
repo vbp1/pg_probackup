@@ -1,0 +1,120 @@
+[project]
+name = "pg_probackup-tests"
+version = "0.1.0"
+description = "Tests for pg_probackup - PostgreSQL backup and recovery utility"
+requires-python = ">=3.8"
+readme = "README.md"
+
+dependencies = [
+    "testgres>=1.12.0",
+    "deprecation",
+    "pexpect",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.3",
+    "pytest-xdist",
+    "allure-pytest",
+]
+dev = [
+    "ruff",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.4.3",
+    "pytest-xdist",
+    "allure-pytest",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["*_test.py"]
+python_classes = ["*Test"]
+python_functions = ["test_*"]
+addopts = "-v"
+
+[tool.ruff]
+# Target Python version
+target-version = "py38"
+
+# Line length matching Black's default
+line-length = 120
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".pytest_cache",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Enable recommended rule sets
+select = [
+    "E",      # pycodestyle errors
+    "F",      # Pyflakes (undefined names, unused imports, etc.)
+    "W",      # pycodestyle warnings
+    "I",      # isort (import sorting)
+    "B",      # flake8-bugbear (likely bugs)
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade (modernize syntax)
+]
+
+# Ignore rules that are too noisy or not applicable
+ignore = [
+    "E501",   # Line too long (handled by line-length setting)
+    "UP030",  # Use implicit references for positional format fields (too many changes)
+    "UP031",  # Use format specifiers instead of percent format
+    "UP032",  # Use f-string instead of format call (too many changes, can enable later)
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# Tests can use assert statements and have longer lines
+"tests/*.py" = [
+    "S101",   # Use of assert detected
+    "S311",   # Standard pseudo-random generators not suitable for cryptographic purposes
+    "S603",   # subprocess call without shell=True
+    "S607",   # Starting a process with a partial executable path
+    "S608",   # Possible SQL injection (tests use parameterized queries intentionally)
+    "B018",   # Found useless expression (often used in tests for side effects)
+]
+"tests/helpers/*.py" = [
+    "S101",
+    "S311",
+    "S603",
+    "S607",
+    "S608",
+]
+
+[tool.ruff.lint.isort]
+# isort configuration
+known-first-party = ["tests", "helpers"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces
+indent-style = "space"
+
+# Respect magic trailing commas
+skip-magic-trailing-comma = false
+
+# Auto-detect line endings
+line-ending = "auto"
