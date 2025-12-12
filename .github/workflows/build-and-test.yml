@@ -67,6 +67,7 @@ jobs:
             flex \
             perl \
             libperl-dev \
+            libipc-run-perl \
             tcl-dev \
             python3 \
             python3-dev \
@@ -212,6 +213,7 @@ jobs:
             flex \
             perl \
             libperl-dev \
+            libipc-run-perl \
             tcl-dev \
             python3 \
             python3-dev \
