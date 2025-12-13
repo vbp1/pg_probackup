@@ -114,8 +114,8 @@ jobs:
           export ASAN_OPTIONS=detect_leaks=1:abort_on_error=1:print_stats=1
           export LSAN_OPTIONS=suppressions=$GITHUB_WORKSPACE/.github/asan.supp
           # ASan increases stack usage, need larger max_stack_depth
-          # Note: max is ~15.5MB depending on system ulimit
-          export PGOPTIONS="-c max_stack_depth=8MB"
+          # System limit is ~15872kB, use max - 100kB
+          export PGOPTIONS="-c max_stack_depth=15700kB"
           export PG_PROBACKUP_TEST_BASIC=ON
           export PGPROBACKUP_GDB=OFF
           uv run pytest -v -n2 -x -k "test_basic" --timeout=300
