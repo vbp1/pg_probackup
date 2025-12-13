@@ -11,3 +11,9 @@ race:thread_interrupted
 # Main thread sets LSN, worker thread reads to check if reached.
 # Benign on x86/x64 where aligned 8-byte operations are atomic.
 race:stop_backup_lsn
+
+# Race on prev_time (time_t) static variable in backup_files function.
+# All threads write the same value (current.start_time) at initialization.
+# Only thread 1 uses it afterward for periodic control file updates.
+# Benign: all writes are identical value.
+race:prev_time
