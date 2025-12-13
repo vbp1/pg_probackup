@@ -1688,16 +1688,21 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             con.commit()
             target_xid = res[0][0]
 
-        # Get WAL file containing target_xid IMMEDIATELY after the INSERT
-        # before any other WAL-generating operations
+        # Get WAL file and LSN containing target_xid IMMEDIATELY after the INSERT
         if self.get_version(node) < self.version_to_num('10.0'):
             walfile = node.safe_psql(
                 'postgres',
                 'select pg_xlogfile_name(pg_current_xlog_location())').decode('utf-8').rstrip()
+            target_lsn = node.safe_psql(
+                'postgres',
+                'select pg_current_xlog_location()').decode('utf-8').rstrip()
         else:
             walfile = node.safe_psql(
                 'postgres',
                 'select pg_walfile_name(pg_current_wal_lsn())').decode('utf-8').rstrip()
+            target_lsn = node.safe_psql(
+                'postgres',
+                'select pg_current_wal_lsn()').decode('utf-8').rstrip()
 
         if self.archive_compress:
             walfile = walfile + '.gz'
@@ -1709,12 +1714,37 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
 
         self.backup_node(backup_dir, 'node', node)
 
-        # Corrupt WAL file that contains target_xid
-        # Corrupt right after the page header to ensure WAL reader fails
+        # Get backup's start_lsn
+        backup_info = self.show_pb(backup_dir, 'node', backup_id)
+        start_lsn = backup_info['start-lsn']
+
+        # Parse LSN to get segment number and offset within segment
+        # LSN format: "X/YYYYYYYY" where X is high 32-bit, Y is low 32-bit
+        seg_size = 16 * 1024 * 1024  # 16MB default WAL segment
+
+        def parse_lsn(lsn_str):
+            parts = lsn_str.split('/')
+            lsn_value = (int(parts[0], 16) << 32) + int(parts[1], 16)
+            segment = lsn_value // seg_size
+            offset = lsn_value % seg_size
+            return segment, offset
+
+        start_seg, start_offset = parse_lsn(start_lsn)
+        target_seg, target_offset = parse_lsn(target_lsn)
+
+        # Determine corruption position
+        # If start_lsn and target_lsn are in the same segment, corrupt between them
+        # If in different segments, corrupt between file start (48) and target_offset
+        if start_seg == target_seg:
+            corrupt_pos = (start_offset + target_offset) // 2
+        else:
+            corrupt_pos = max(48, target_offset // 2)
+
+        # Corrupt WAL file
         wals_dir = os.path.join(backup_dir, 'wal', 'node')
         walfile_path = os.path.join(wals_dir, walfile)
         with open(walfile_path, "rb+", 0) as f:
-            f.seek(48)  # Right after WAL page header (~40 bytes)
+            f.seek(corrupt_pos)
             f.write(b"CORRUPTED_DATA")
             f.flush()
 
