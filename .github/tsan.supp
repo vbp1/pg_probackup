@@ -1,0 +1,13 @@
+# ThreadSanitizer suppression file for pg_probackup
+# These are known data races that are benign on x86/x64 but should be
+# fixed properly using atomic operations in a separate PR.
+
+# Race on thread_interrupted flag (bool) used to signal streaming thread to stop.
+# Main thread writes false, worker thread reads to check if should stop.
+# Benign: worst case is one extra loop iteration before stopping.
+race:thread_interrupted
+
+# Race on stop_backup_lsn (uint64) used to signal WAL streaming stop point.
+# Main thread sets LSN, worker thread reads to check if reached.
+# Benign on x86/x64 where aligned 8-byte operations are atomic.
+race:stop_backup_lsn

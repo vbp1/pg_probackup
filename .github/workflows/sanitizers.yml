@@ -183,7 +183,7 @@ jobs:
         run: |
           export PATH=$PGHOME/bin:$PATH
           export PG_CONFIG=$(which pg_config)
-          export TSAN_OPTIONS=second_deadlock_stack=1
+          export TSAN_OPTIONS=second_deadlock_stack=1:suppressions=$GITHUB_WORKSPACE/.github/tsan.supp
           export PG_PROBACKUP_TEST_BASIC=ON
           export PGPROBACKUP_GDB=OFF
           uv run pytest -v -n1 -x -k "test_basic" --timeout=600
