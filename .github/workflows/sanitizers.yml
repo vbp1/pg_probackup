@@ -110,6 +110,7 @@ jobs:
           export PATH=$PGHOME/bin:$PATH
           export PG_CONFIG=$(which pg_config)
           export ASAN_OPTIONS=detect_leaks=1:abort_on_error=1:print_stats=1
+          export LSAN_OPTIONS=suppressions=$GITHUB_WORKSPACE/.github/asan.supp
           export PG_PROBACKUP_TEST_BASIC=ON
           export PGPROBACKUP_GDB=OFF
           uv run pytest -v -n2 -x -k "test_basic" --timeout=300
