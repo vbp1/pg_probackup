@@ -156,7 +156,7 @@ jobs:
           if [ "${{ matrix.mode }}" = "basic" ]; then
             export PG_PROBACKUP_TEST_BASIC=ON
             uv run pytest -v -n4 -k "test_basic"
-            uv run pytest -v -n4 -k "init_test.py"
+            uv run pytest -v -n4 tests/init_test.py
           elif [ "${{ matrix.mode }}" = "full" ]; then
             uv run pytest -v -n4
           else
@@ -295,7 +295,7 @@ jobs:
           export PG_PROBACKUP_PTRACK=ON
           export PG_PROBACKUP_TEST_BASIC=ON
           uv run pytest -v -n4 -k "test_basic"
-          uv run pytest -v -n4 -k "init_test.py"
+          uv run pytest -v -n4 tests/init_test.py
 
       - name: Upload logs on failure
         if: failure()
