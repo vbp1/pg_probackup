@@ -233,8 +233,6 @@ class PostgresNodeExtended(testgres.PostgresNode):
         return sum.hexdigest()
 
 class ProbackupTest:
-    __test__ = False  # Prevent pytest from collecting this base class
-
     # Class attributes
     enterprise = is_enterprise()
     enable_nls = is_nls_enabled()
