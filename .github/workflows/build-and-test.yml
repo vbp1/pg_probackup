@@ -18,6 +18,10 @@ jobs:
       matrix:
         include:
           # Basic tests for all supported versions
+          - pg_version: "18"
+            pg_branch: "REL_18_STABLE"
+            ptrack_branch: "REL_18_STABLE"
+            mode: "basic"
           - pg_version: "17"
             pg_branch: "REL_17_STABLE"
             ptrack_branch: "REL_17_STABLE"
@@ -181,10 +185,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - pg_version: "18"
-            pg_branch: "REL_18_STABLE"
-            ptrack_branch: "REL_18_STABLE"
-            mode: "basic"
           - pg_version: "19"
             pg_branch: "master"
             ptrack_branch: "master"
