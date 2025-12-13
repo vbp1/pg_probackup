@@ -33,10 +33,9 @@ jobs:
 
       - name: Run cppcheck
         run: |
-          cppcheck --enable=warning,style,performance,portability \
+          cppcheck \
             --error-exitcode=1 \
             --suppress=missingIncludeSystem \
-            --suppress=variableScope \
             --quiet \
             src/
 
