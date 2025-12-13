@@ -1,12 +1,11 @@
+import hashlib
 import os
+import time
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 from datetime import datetime, timedelta
 from pathlib import Path
-import subprocess
-from sys import exit
-import time
-import hashlib
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class ValidateTest(ProbackupTest, unittest.TestCase):
@@ -437,7 +436,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
         control_path = os.path.join(
             backup_dir, 'backups', 'node', backup_id_1, 'backup.control')
 
-        with open(control_path, 'r') as f:
+        with open(control_path) as f:
             actual_control = f.read()
 
         new_control_file = ''
@@ -446,7 +445,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 'status = OK', 'status = ERROR')
             new_control_file += '\n'
 
-        with open(control_path, 'wt') as f:
+        with open(control_path, 'w') as f:
             f.write(new_control_file)
             f.flush()
             f.close()
@@ -521,7 +520,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
         control_path = os.path.join(
             backup_dir, 'backups', 'node', backup_id_1, 'backup.control')
 
-        with open(control_path, 'r') as f:
+        with open(control_path) as f:
             actual_control = f.read()
 
         new_control_file = ''
@@ -530,7 +529,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 'status = OK', 'status = ERROR')
             new_control_file += '\n'
 
-        with open(control_path, 'wt') as f:
+        with open(control_path, 'w') as f:
             f.write(new_control_file)
             f.flush()
             f.close()
@@ -1135,7 +1134,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             'Backup STATUS should be "OK"')
 
         log_file = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
             self.assertNotIn(
                 'Interrupted while locking backup', log_content)
@@ -1899,7 +1898,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
         time.sleep(5)
 
         log_file = os.path.join(node2.logs_dir, 'postgresql.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
             self.assertTrue(
                 'LOG:  archive command failed with exit code 1' in log_content and
@@ -1954,7 +1953,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 "Expecting Error because of data file dissapearance.\n "
                 "Output: {0} \n CMD: {1}".format(
                     self.output, self.cmd))
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         self.assertTrue(
@@ -1988,8 +1987,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
             self.assertIn(
-                'WARNING: Some backups are not valid'.format(
-                    backup_id), e.message,
+                'WARNING: Some backups are not valid', e.message,
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
@@ -2012,8 +2010,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             self.validate_pb(backup_dir, options=["-j", "4"])
         except ProbackupException as e:
             self.assertIn(
-                'WARNING: Some backups are not valid'.format(
-                    backup_id), e.message,
+                'WARNING: Some backups are not valid', e.message,
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
@@ -2086,8 +2083,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
             self.assertIn(
-                'WARNING: Some backups are not valid'.format(
-                    backup_id), e.message,
+                'WARNING: Some backups are not valid', e.message,
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
@@ -2112,8 +2108,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             self.validate_pb(backup_dir, options=["-j", "4"])
         except ProbackupException as e:
             self.assertIn(
-                'WARNING: Some backups are not valid'.format(
-                    backup_id), e.message,
+                'WARNING: Some backups are not valid', e.message,
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
@@ -3569,7 +3564,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             data_dir=node_restored.data_dir)
 
         target_lsn = self.show_pb(backup_dir, 'node')[1]['stop-lsn']
-        
+
         self.delete_pb(backup_dir, 'node', backup_id)
 
         self.validate_pb(
@@ -3800,15 +3795,15 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
 
         fake_new_pg_version = pg_version + 1
 
-        with open(control_file, 'r') as f:
-            data = f.read();
+        with open(control_file) as f:
+            data = f.read()
 
         data = data.replace(
             "server-version = {0}".format(str(pg_version)),
             "server-version = {0}".format(str(fake_new_pg_version)))
 
         with open(control_file, 'w') as f:
-            f.write(data);
+            f.write(data)
 
         try:
             self.validate_pb(backup_dir)

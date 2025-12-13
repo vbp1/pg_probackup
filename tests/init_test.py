@@ -1,7 +1,8 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import dir_files, ProbackupTest, ProbackupException
 import shutil
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest, dir_files
 
 
 class InitTest(ProbackupTest, unittest.TestCase):

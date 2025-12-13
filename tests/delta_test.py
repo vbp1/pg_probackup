@@ -1,11 +1,11 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from datetime import datetime, timedelta
-from testgres import QueryException
-import subprocess
 import time
+import unittest
 from threading import Thread
+
+from testgres import QueryException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class DeltaTest(ProbackupTest, unittest.TestCase):

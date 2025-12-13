@@ -9,11 +9,12 @@ restore
 
 """
 import os
-import unittest
 import shutil
+import unittest
 
 from .helpers.cfs_helpers import find_by_name
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 tblspace_name = 'cfs_tblspace'
 tblspace_name_new = 'cfs_tblspace_new'

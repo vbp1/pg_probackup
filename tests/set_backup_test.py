@@ -1,9 +1,8 @@
-import unittest
-import subprocess
 import os
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from sys import exit
+import unittest
 from datetime import datetime, timedelta
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class SetBackupTest(ProbackupTest, unittest.TestCase):
@@ -258,7 +257,7 @@ class SetBackupTest(ProbackupTest, unittest.TestCase):
         self.backup_node(
             backup_dir, 'node', node,
             backup_type='page', options=['--stream'])
-        
+
         node.pgbench_init(scale=1)
 
         # Take DELTA BACKUP and pin it
@@ -270,7 +269,7 @@ class SetBackupTest(ProbackupTest, unittest.TestCase):
             options=[
                 '--stream',
                 '--expire-time={0}'.format(expire_time)])
-        
+
         node.pgbench_init(scale=1)
 
         # Take second PAGE BACKUP

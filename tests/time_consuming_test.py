@@ -1,8 +1,8 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest
-import subprocess
 from time import sleep
+
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class TimeConsumingTests(ProbackupTest, unittest.TestCase):

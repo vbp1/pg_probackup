@@ -1,8 +1,9 @@
 import os
 import unittest
 from datetime import datetime, timedelta
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
 from time import sleep
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class RetentionTest(ProbackupTest, unittest.TestCase):
@@ -1733,7 +1734,7 @@ class RetentionTest(ProbackupTest, unittest.TestCase):
         self.set_config(
             backup_dir, 'node', options=['--retention-window=2'])
 
-        # create pair of MERGING backup as a result of failed merge 
+        # create pair of MERGING backup as a result of failed merge
         gdb = self.merge_backup(
             backup_dir, 'node', delta_id, gdb=True)
         gdb.set_breakpoint('backup_non_data_file')
@@ -1973,7 +1974,7 @@ class RetentionTest(ProbackupTest, unittest.TestCase):
             base_dir=os.path.join(self.module_name, self.fname, 'node_tli3'))
         node_tli3.cleanup()
 
-        # Note, that successful validation here is a happy coincidence 
+        # Note, that successful validation here is a happy coincidence
         output = self.restore_node(
             backup_dir, 'node', node_tli3,
             options=[
@@ -2191,7 +2192,7 @@ class RetentionTest(ProbackupTest, unittest.TestCase):
             base_dir=os.path.join(self.module_name, self.fname, 'node_tli3'))
         node_tli3.cleanup()
 
-        # Note, that successful validation here is a happy coincidence 
+        # Note, that successful validation here is a happy coincidence
         output = self.restore_node(
             backup_dir, 'node', node_tli3,
             options=[

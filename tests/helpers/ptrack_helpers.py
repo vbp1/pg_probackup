@@ -1,22 +1,20 @@
 # you need os for unittest to work
+import getpass
+import hashlib
+import json
 import os
-import gc
-import unittest
-from sys import exit, argv, version_info
+import random
+import re
+import shutil
 import signal
 import subprocess
-import shutil
-from time import sleep
-import six
-import testgres
-import hashlib
-import re
-import getpass
-import select
 import time
-import re
-import json
-import random
+import unittest
+from sys import argv, exit
+from time import sleep
+
+import testgres
+
 
 idx_ptrack = {
     't_heap': {
@@ -234,7 +232,7 @@ class PostgresNodeExtended(testgres.PostgresNode):
         con.close()
         return sum.hexdigest()
 
-class ProbackupTest(object):
+class ProbackupTest:
     # Class attributes
     enterprise = is_enterprise()
     enable_nls = is_nls_enabled()
@@ -557,7 +555,7 @@ class ProbackupTest(object):
                 node, {}, 'postgresql.conf', ['wal_keep_segments'])
 
         return node
-    
+
     def simple_bootstrap(self, node, role) -> None:
 
         node.safe_psql(
@@ -896,7 +894,7 @@ class ProbackupTest(object):
             backup_dir, 'backups',
             instance, backup_id, 'backup_content.control')
 
-        with open(filelist_path, 'r') as f:
+        with open(filelist_path) as f:
                 filelist_raw = f.read()
 
         filelist_splitted = filelist_raw.splitlines()
@@ -1455,13 +1453,13 @@ class ProbackupTest(object):
 
         if self.get_version(node) >= self.version_to_num('12.0'):
             recovery_conf_path = os.path.join(node.data_dir, 'postgresql.auto.conf')
-            with open(recovery_conf_path, 'r') as f:
+            with open(recovery_conf_path) as f:
                 print(f.read())
         else:
             recovery_conf_path = os.path.join(node.data_dir, 'recovery.conf')
 
         with open(
-            recovery_conf_path, 'r'
+            recovery_conf_path
         ) as recovery_conf:
             for line in recovery_conf:
                 try:
@@ -1562,7 +1560,7 @@ class ProbackupTest(object):
         # parse postgresql.auto.conf
         path = os.path.join(node.data_dir, config)
 
-        with open(path, 'r') as f:
+        with open(path) as f:
             raw_content = f.read()
 
         current_options = {}
@@ -1603,7 +1601,7 @@ class ProbackupTest(object):
         for directive in current_directives:
             auto_conf += directive + "\n"
 
-        with open(path, 'wt') as f:
+        with open(path, 'w') as f:
             f.write(auto_conf)
             f.flush()
             f.close()
@@ -1659,7 +1657,7 @@ class ProbackupTest(object):
         control_file_path = os.path.join(
             backup_dir, 'backups', instance, backup_id, 'backup.control')
 
-        with open(control_file_path, 'r') as f:
+        with open(control_file_path) as f:
             actual_control = f.read()
 
         new_control_file = ''
@@ -1669,12 +1667,12 @@ class ProbackupTest(object):
             new_control_file += line
             new_control_file += '\n'
 
-        with open(control_file_path, 'wt') as f:
+        with open(control_file_path, 'w') as f:
             f.write(new_control_file)
             f.flush()
             f.close()
 
-        with open(control_file_path, 'r') as f:
+        with open(control_file_path) as f:
             actual_control = f.read()
 
     def wrong_wal_clean(self, node, wal_size):
@@ -2274,10 +2272,10 @@ class GDBobj:
 #            if running and line.startswith('*running'):
                 break
         return output
-class ContentFile(object):
+class ContentFile:
     __slots__ = ('is_datafile', 'mode', 'md5', 'md5_per_page')
     def __init__(self, is_datafile: bool):
         self.is_datafile = is_datafile
 
-class ContentDir(object):
+class ContentDir:
     __slots__ = ('mode')

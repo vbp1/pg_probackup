@@ -4,7 +4,7 @@ set -xe
 
 export PGHOME=/pg
 export PG_SRC=$PWD/postgres
-export PATH=$PGHOME/bin:$PATH
+export PATH="$HOME/.local/bin:$PGHOME/bin:$PATH"
 export LD_LIBRARY_PATH=$PGHOME/lib
 export PG_CONFIG=$(which pg_config)
 
@@ -42,12 +42,12 @@ fi
 if [ "$MODE" = "basic" ]; then
     export PG_PROBACKUP_TEST_BASIC=ON
     echo PG_PROBACKUP_TEST_BASIC=${PG_PROBACKUP_TEST_BASIC}
-    python3 -m pytest -v -n4 -k "test_basic"
-    python3 -m pytest -v -n4 -k "init_test.py"
+    uv run pytest -v -n4 -k "test_basic"
+    uv run pytest -v -n4 -k "init_test.py"
 elif [ "$MODE" = "full" ]; then
     echo PG_PROBACKUP_TEST_BASIC=${PG_PROBACKUP_TEST_BASIC}
-    python3 -m pytest -v -n4
+    uv run pytest -v -n4
 else
     echo PG_PROBACKUP_TEST_BASIC=${PG_PROBACKUP_TEST_BASIC}
-    python3 -m pytest -v -n4 -k "$MODE"
+    uv run pytest -v -n4 -k "$MODE"
 fi

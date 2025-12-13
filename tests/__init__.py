@@ -1,13 +1,45 @@
-import unittest
 import os
+import unittest
 
-from . import init_test, merge_test, option_test, show_test, compatibility_test, \
-    backup_test, delete_test, delta_test, restore_test, validate_test, \
-    retention_test, pgpro560_test, pgpro589_test, pgpro2068_test, false_positive_test, replica_test, \
-    compression_test, page_test, ptrack_test, archive_test, exclude_test, cfs_backup_test, cfs_restore_test, \
-    cfs_validate_backup_test, auth_test, time_stamp_test, logging_test, \
-    locking_test, remote_test, external_test, config_test, checkdb_test, set_backup_test, incr_restore_test, \
-    catchup_test, CVE_2018_1058_test, time_consuming_test
+from . import (
+    CVE_2018_1058_test,
+    archive_test,
+    auth_test,
+    backup_test,
+    catchup_test,
+    cfs_backup_test,
+    cfs_restore_test,
+    cfs_validate_backup_test,
+    checkdb_test,
+    compatibility_test,
+    compression_test,
+    config_test,
+    delete_test,
+    delta_test,
+    exclude_test,
+    external_test,
+    false_positive_test,
+    incr_restore_test,
+    init_test,
+    locking_test,
+    logging_test,
+    merge_test,
+    option_test,
+    page_test,
+    pgpro560_test,
+    pgpro589_test,
+    pgpro2068_test,
+    ptrack_test,
+    remote_test,
+    replica_test,
+    restore_test,
+    retention_test,
+    set_backup_test,
+    show_test,
+    time_consuming_test,
+    time_stamp_test,
+    validate_test,
+)
 
 
 def load_tests(loader, tests, pattern):

@@ -1,8 +1,8 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, idx_ptrack
-from datetime import datetime, timedelta
 import subprocess
+import unittest
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class ArchiveCheck(ProbackupTest, unittest.TestCase):

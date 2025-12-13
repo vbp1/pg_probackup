@@ -1,12 +1,9 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from datetime import datetime, timedelta
-import subprocess
+
 from testgres import QueryException
-import shutil
-import sys
-import time
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class CheckdbTest(ProbackupTest, unittest.TestCase):
@@ -34,7 +31,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
         node.safe_psql(
             "postgres",
             "create index on t_heap(id)")
-            
+
         node.safe_psql(
             "postgres",
             "create table idxpart (a int) "
@@ -50,7 +47,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                 "postgres",
                 "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")
@@ -241,7 +238,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                "db1",
                "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "db1",
                 "create extension amcheck_next")
@@ -251,7 +248,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                 "db2",
                 "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "db2",
                 "create extension amcheck_next")
@@ -466,7 +463,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                "postgres",
                "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")
@@ -562,7 +559,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                "postgres",
                "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")
@@ -585,7 +582,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
         gdb._execute('signal SIGINT')
         gdb.continue_execution_until_error()
 
-        with open(node.pg_log_file, 'r') as f:
+        with open(node.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('could not receive data from client', output)
@@ -616,7 +613,7 @@ class CheckdbTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                "backupdb",
                "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "backupdb",
                 "create extension amcheck_next")

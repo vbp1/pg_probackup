@@ -1,17 +1,13 @@
-import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-import subprocess
-from datetime import datetime
-import sys
-from time import sleep
-from datetime import datetime, timedelta
-import hashlib
-import shutil
 import json
-from testgres import QueryException, StartNodeException
+import os
 import stat
-from stat import S_ISDIR
+import subprocess
+import unittest
+
+from testgres import QueryException, StartNodeException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class IncrRestoreTest(ProbackupTest, unittest.TestCase):
 
@@ -1988,7 +1984,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node2.pg_log_file, 'r') as f:
+        with open(node2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -2097,7 +2093,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node2.pg_log_file, 'r') as f:
+        with open(node2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -2240,7 +2236,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn('FATAL', e.message)
 
-        with open(node2.pg_log_file, 'r') as f:
+        with open(node2.pg_log_file) as f:
             output = f.read()
 
         self.assertNotIn('PANIC', output)
@@ -2353,7 +2349,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
                                        "--db-exclude=db5",
                                        "-T", f"{node_tablespace}={node2_tablespace}"])
             self.fail("remapped tablespace contain old data")
-        except ProbackupException as e:
+        except ProbackupException:
             pass
 
         try:
@@ -2493,7 +2489,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
                 '\n Unexpected Error Message: {0}\n CMD: {1}'.format(
                     repr(e.message), self.cmd))
 
-        with open(os.path.join(node.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(node.logs_dir, 'postgresql.log')) as f:
             if self.pg_config_version >= 120000:
                 self.assertIn(
                     "PANIC:  could not read file \"global/pg_control\"",

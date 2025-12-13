@@ -1,13 +1,12 @@
 import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, idx_ptrack
-from datetime import datetime, timedelta
-import subprocess
-from testgres import QueryException, StartNodeException
 import shutil
-import sys
-from time import sleep
+import unittest
 from threading import Thread
+from time import sleep
+
+from testgres import QueryException, StartNodeException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest, idx_ptrack
 
 
 class PtrackTest(ProbackupTest, unittest.TestCase):
@@ -2957,7 +2956,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         shutil.rmtree(
             self.get_tblspace_path(node, 'somedata'),
             ignore_errors=True)
-    
+
         self.restore_node(backup_dir, 'node', node)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3167,7 +3166,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         shutil.rmtree(
             self.get_tblspace_path(node, 'somedata'),
             ignore_errors=True)
-    
+
         self.restore_node(backup_dir, 'node', node)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3271,7 +3270,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, 'node'))
         node.cleanup()
-    
+
         self.restore_node(backup_dir, 'replica', node, data_dir=node.data_dir)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3347,7 +3346,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         shutil.rmtree(
             self.get_tblspace_path(node, 'somedata'),
             ignore_errors=True)
-    
+
         self.restore_node(backup_dir, 'node', node)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3442,7 +3441,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
 
         pgdata = self.pgdata_content(replica.data_dir)
         replica.cleanup()
-    
+
         self.restore_node(backup_dir, 'replica', replica)
 
         pgdata_restored = self.pgdata_content(replica.data_dir)
@@ -3518,7 +3517,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         shutil.rmtree(
             self.get_tblspace_path(node, 'somedata'),
             ignore_errors=True)
-    
+
         self.restore_node(backup_dir, 'node', node)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3593,7 +3592,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
         shutil.rmtree(
             self.get_tblspace_path(node, 'somedata'),
             ignore_errors=True)
-    
+
         self.restore_node(backup_dir, 'node', node)
 
         pgdata_restored = self.pgdata_content(node.data_dir)
@@ -3691,7 +3690,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
 
         pgdata = self.pgdata_content(replica.data_dir)
         replica.cleanup()
-    
+
         self.restore_node(backup_dir, 'replica', replica)
 
         pgdata_restored = self.pgdata_content(replica.data_dir)
@@ -4233,7 +4232,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
             node.slow_start()
 
             log_file = os.path.join(node.logs_dir, 'postgresql.log')
-            with open(log_file, 'r') as f:
+            with open(log_file) as f:
                 log_content = f.read()
 
             self.assertIn(
@@ -4258,7 +4257,7 @@ class PtrackTest(ProbackupTest, unittest.TestCase):
                     ' CMD: {1}'.format(repr(e.message), self.cmd))
 
             log_file = os.path.join(node.logs_dir, 'postgresql.log')
-            with open(log_file, 'r') as f:
+            with open(log_file) as f:
                 log_content = f.read()
 
             self.assertIn(

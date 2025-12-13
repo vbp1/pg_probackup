@@ -1,9 +1,8 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from datetime import datetime, timedelta
-import subprocess
 from time import sleep
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class CheckSystemID(ProbackupTest, unittest.TestCase):

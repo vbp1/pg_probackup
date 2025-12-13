@@ -1,8 +1,7 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, idx_ptrack
-from datetime import datetime, timedelta
-import subprocess
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class CompressionTest(ProbackupTest, unittest.TestCase):

@@ -1,12 +1,13 @@
-import os
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from testgres import QueryException
-from datetime import datetime, timedelta
-import subprocess
 import gzip
+import os
 import shutil
 import time
+import unittest
+
+from testgres import QueryException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class PageTest(ProbackupTest, unittest.TestCase):
 
@@ -1136,7 +1137,7 @@ class PageTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                 "postgres",
                 "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")
@@ -1269,7 +1270,7 @@ class PageTest(ProbackupTest, unittest.TestCase):
             node.safe_psql(
                 "postgres",
                 "create extension amcheck")
-        except QueryException as e:
+        except QueryException:
             node.safe_psql(
                 "postgres",
                 "create extension amcheck_next")

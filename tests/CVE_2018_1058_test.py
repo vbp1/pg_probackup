@@ -1,6 +1,8 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class CVE_2018_1058(ProbackupTest, unittest.TestCase):
 
@@ -65,7 +67,7 @@ class CVE_2018_1058(ProbackupTest, unittest.TestCase):
         self.backup_node(backup_dir, 'node', node, backup_type='full', options=['--stream'])
 
         log_file = os.path.join(node.logs_dir, 'postgresql.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
             self.assertFalse(
                 'pg_probackup vulnerable!' in log_content)
@@ -89,7 +91,7 @@ class CVE_2018_1058(ProbackupTest, unittest.TestCase):
             "END "
             "$$ LANGUAGE plpgsql; "
             "CREATE VIEW public.pg_database AS SELECT * FROM public.pg_database()")
-        
+
         node.safe_psql(
             'postgres',
             "CREATE FUNCTION public.pg_extension(OUT extname name, OUT extnamespace oid, OUT extversion text) "

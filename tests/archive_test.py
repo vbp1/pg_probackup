@@ -1,13 +1,13 @@
+import gzip
 import os
 import shutil
-import gzip
-import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, GdbException
-from .helpers.data_helpers import tail_file
-from datetime import datetime, timedelta
 import subprocess
+import unittest
 from sys import exit
 from time import sleep
+
+from .helpers.data_helpers import tail_file
+from .helpers.ptrack_helpers import ProbackupTest
 
 
 class ArchiveTest(ProbackupTest, unittest.TestCase):
@@ -246,7 +246,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         sleep(1)
 
         log_file = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
 
         # in PG =< 9.6 pg_stop_backup always wait
@@ -260,7 +260,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
                 log_content)
 
         log_file = os.path.join(node.logs_dir, 'postgresql.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
 
         self.assertNotIn(
@@ -323,7 +323,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         # gdb._execute('detach')
 
         log_file = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
 
         if self.get_version(node) < 150000:
@@ -336,7 +336,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
                 log_content)
 
         log_file = os.path.join(node.logs_dir, 'postgresql.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
 
         self.assertNotIn(
@@ -568,7 +568,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
             options=['--recovery-target-xid={0}'.format(xid)])
 
         log_file = os.path.join(node.logs_dir, 'postgresql.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
 
             self.assertIn(
@@ -1029,15 +1029,15 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         pgbench.wait()
         pgbench.stdout.close()
 
-        with open(os.path.join(master.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(master.logs_dir, 'postgresql.log')) as f:
             log_content = f.read()
         self.assertNotIn('different checksum', log_content)
 
-        with open(os.path.join(replica.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(replica.logs_dir, 'postgresql.log')) as f:
             log_content = f.read()
         self.assertNotIn('different checksum', log_content)
 
-        with open(os.path.join(replica1.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(replica1.logs_dir, 'postgresql.log')) as f:
             log_content = f.read()
         self.assertNotIn('different checksum', log_content)
 
@@ -1648,7 +1648,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_content = f.read()
 
         self.assertIn(
@@ -1664,7 +1664,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
                 '--archive-port=22',
                 '--archive-user={0}'.format(self.user)])
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_content = f.read()
 
         self.assertIn(
@@ -1720,7 +1720,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         else:
             recovery_conf = os.path.join(node.data_dir, 'recovery.conf')
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_content = f.read()
 
         self.assertIn(
@@ -1738,7 +1738,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
                 '--archive-user={0}'.format(self.user)
                 ])
 
-        with open(recovery_conf, 'r') as f:
+        with open(recovery_conf) as f:
             recovery_content = f.read()
 
         self.assertIn(
@@ -2007,7 +2007,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         self.backup_node(backup_dir, 'node', node)
 
-        with open(os.path.join(node.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(node.logs_dir, 'postgresql.log')) as f:
             postgres_log_content = cleanup_ptrack(f.read())
 
         # print(postgres_log_content)
@@ -2228,7 +2228,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         self.assertEqual(result, result_new)
 
-        with open(os.path.join(node.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(node.logs_dir, 'postgresql.log')) as f:
             postgres_log_content = f.read()
 
         # check that requesting of non-existing segment do not
@@ -2306,7 +2306,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         sleep(5)
 
-        with open(os.path.join(replica.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(replica.logs_dir, 'postgresql.log')) as f:
             postgres_log_content = f.read()
 
         self.assertIn(
@@ -2368,7 +2368,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         sleep(5)
 
-        with open(os.path.join(replica.logs_dir, 'postgresql.log'), 'r') as f:
+        with open(os.path.join(replica.logs_dir, 'postgresql.log')) as f:
             postgres_log_content = f.read()
 
         self.assertIn(
@@ -2392,12 +2392,12 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         for filename in [files[-4], files[-3], files[-2], files[-1]]:
             src_file = os.path.join(archive_dir, filename)
-    
+
             if node.major_version >= 10:
                 wal_dir = 'pg_wal'
             else:
                 wal_dir = 'pg_xlog'
-    
+
             if filename.endswith('.gz'):
                 dst_file = os.path.join(replica.data_dir, wal_dir, 'pbk_prefetch', filename[:-3])
                 with gzip.open(src_file, 'rb') as f_in, open(dst_file, 'wb') as f_out:
@@ -2567,7 +2567,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         self.show_archive(backup_dir, 'node', options=['--log-level-file=VERBOSE'])
 
-        with open(os.path.join(backup_dir, 'log', 'pg_probackup.log'), 'r') as f:
+        with open(os.path.join(backup_dir, 'log', 'pg_probackup.log')) as f:
             log_content = f.read()
 
         self.assertNotIn(
@@ -2649,7 +2649,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
             self.assertEqual(timeline['switchpoint'], '0/0')
 
         log_file = os.path.join(backup_dir, 'log', 'pg_probackup.log')
-        with open(log_file, 'r') as f:
+        with open(log_file) as f:
             log_content = f.read()
         wal_dir = os.path.join(backup_dir, 'wal', 'node')
 

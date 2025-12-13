@@ -1,10 +1,8 @@
-import unittest
 import os
+import unittest
 from time import sleep
 
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
-from datetime import datetime, timedelta
-import subprocess
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class FalsePositive(ProbackupTest, unittest.TestCase):

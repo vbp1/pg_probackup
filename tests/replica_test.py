@@ -1,11 +1,10 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException, idx_ptrack
-from datetime import datetime, timedelta
-import subprocess
-import time
-from testgres import ProcessType
 from time import sleep
+
+from testgres import ProcessType
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class ReplicaTest(ProbackupTest, unittest.TestCase):
@@ -1169,7 +1168,7 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
         self.assertTrue(
             os.path.exists(wal_file_partial),
             "File {0} disappeared".format(wal_file))
-        
+
         self.assertTrue(
             os.path.exists(wal_file_partial),
             "File {0} disappeared".format(wal_file_partial))

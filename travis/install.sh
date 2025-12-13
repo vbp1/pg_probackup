@@ -68,4 +68,9 @@ if [ ! -d "contrib/amcheck" ]; then
     make -C contrib/amcheck install
 fi
 
-pip3 install -r ../tests/requirements.txt
+# Install uv and Python dependencies
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+cd ..
+uv sync
+cd postgres

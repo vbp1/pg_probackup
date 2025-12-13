@@ -1,8 +1,9 @@
 import os
-from pathlib import Path
-import signal
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+from pathlib import Path
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
+
 
 class CatchupTest(ProbackupTest, unittest.TestCase):
 
