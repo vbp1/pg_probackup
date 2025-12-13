@@ -1,7 +1,6 @@
-# Suppress leaks from PostgreSQL code (not our responsibility)
-leak:pg_strdup
-leak:pstrdup
-leak:fe_memutils.c
-leak:config_info.c
-leak:pg_config
+# Suppress all leaks from PostgreSQL source code (not our responsibility)
+# This matches any frame containing "postgres/src" in the path
+leak:postgres/src
+
+# Suppress leaks from PostgreSQL libraries
 leak:libpq
