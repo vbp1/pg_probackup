@@ -1688,6 +1688,8 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
             con.commit()
             target_xid = res[0][0]
 
+        # Get WAL file containing target_xid IMMEDIATELY after the INSERT
+        # before any other WAL-generating operations
         if self.get_version(node) < self.version_to_num('10.0'):
             walfile = node.safe_psql(
                 'postgres',
@@ -1699,6 +1701,7 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
 
         if self.archive_compress:
             walfile = walfile + '.gz'
+
         self.switch_wal_segment(node)
 
         # generate some wals
@@ -1706,13 +1709,14 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
 
         self.backup_node(backup_dir, 'node', node)
 
-        # Corrupt WAL
+        # Corrupt WAL file that contains target_xid
+        # Corrupt right after the page header to ensure WAL reader fails
         wals_dir = os.path.join(backup_dir, 'wal', 'node')
-        with open(os.path.join(wals_dir, walfile), "rb+", 0) as f:
-            f.seek(9000)
-            f.write(b"Because the answer is 42")
+        walfile_path = os.path.join(wals_dir, walfile)
+        with open(walfile_path, "rb+", 0) as f:
+            f.seek(48)  # Right after WAL page header (~40 bytes)
+            f.write(b"CORRUPTED_DATA")
             f.flush()
-            f.close
 
         # Validate to xid
         try:
