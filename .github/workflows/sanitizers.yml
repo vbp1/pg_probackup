@@ -89,6 +89,8 @@ jobs:
         run: |
           export PATH=$PGHOME/bin:$PATH
           export PG_CONFIG=$(which pg_config)
+          # Disable leak detection during build (pg_config has known leaks)
+          export ASAN_OPTIONS=detect_leaks=0
           make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres \
             CC=clang \
             CFLAGS="-fsanitize=address -fno-omit-frame-pointer -O1 -g" \
