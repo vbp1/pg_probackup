@@ -1132,7 +1132,6 @@ class ProbackupTest:
             '-B', backup_dir,
             '--instance={0}'.format(instance),
             # "-D", pgdata,
-            '-h', '127.0.0.1',
             '-p', '%i' % node.port,
             '-d', datname
         ]
@@ -1160,10 +1159,6 @@ class ProbackupTest:
             ):
 
         cmd_list = ["checkdb"]
-
-        # Add host if connecting to database (options contain -d or -p)
-        if any(opt in options for opt in ['-d', '-p']):
-            cmd_list += ['-h', '127.0.0.1']
 
         if backup_dir:
             cmd_list += ["-B", backup_dir]
