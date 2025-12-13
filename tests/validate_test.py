@@ -3434,8 +3434,6 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
                 "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(e.message), self.cmd),
             )
 
-    # TODO fix the test
-    @unittest.expectedFailure
     # @unittest.skip("skip")
     def test_validate_target_lsn(self):
         """
@@ -3468,11 +3466,12 @@ class ValidateTest(ProbackupTest, unittest.TestCase):
 
         self.restore_node(backup_dir, "node", node_restored)
 
+        self.set_archiving(backup_dir, "node", node_restored)
         self.set_auto_conf(node_restored, {"port": node_restored.port})
 
         node_restored.slow_start()
 
-        self.switch_wal_segment(node)
+        self.switch_wal_segment(node_restored)
 
         backup_id = self.backup_node(backup_dir, "node", node_restored, data_dir=node_restored.data_dir)
 
