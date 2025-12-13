@@ -292,8 +292,18 @@ jobs:
           export PATH=$PGHOME/bin:$PATH
           export PG_CONFIG=$(which pg_config)
           export PGPROBACKUP_GDB=ON
-          export PG_PROBACKUP_PTRACK=ON
           export PG_PROBACKUP_TEST_BASIC=ON
+
+          # Check if ptrack extension was successfully installed
+          PKGLIBDIR=$(pg_config --pkglibdir)
+          if [ -f "$PKGLIBDIR/ptrack.so" ]; then
+            echo "ptrack extension found, enabling ptrack tests"
+            export PG_PROBACKUP_PTRACK=ON
+          else
+            echo "ptrack extension not found, disabling ptrack tests"
+            export PG_PROBACKUP_PTRACK=OFF
+          fi
+
           uv run pytest -v -n4 -k "test_basic"
           uv run pytest -v -n4 tests/init_test.py
 
