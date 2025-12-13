@@ -25,10 +25,14 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
+[tool.hatch.build.targets.wheel]
+packages = ["tests"]
+
+[dependency-groups]
+dev = [
     "pytest>=7.4.3",
     "pytest-xdist",
+    "pytest-timeout",
     "allure-pytest",
     "ruff",
 ]
