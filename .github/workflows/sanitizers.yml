@@ -94,7 +94,7 @@ jobs:
           make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres \
             CC=clang \
             CFLAGS="-fsanitize=address -fno-omit-frame-pointer -O1 -g" \
-            LDFLAGS="-fsanitize=address" \
+            LDFLAGS="-fsanitize=address -Wl,-rpath,$PGHOME/lib" \
             clean install
 
       - name: Install uv
@@ -114,7 +114,8 @@ jobs:
           export ASAN_OPTIONS=detect_leaks=1:abort_on_error=1:print_stats=1
           export LSAN_OPTIONS=suppressions=$GITHUB_WORKSPACE/.github/asan.supp
           # ASan increases stack usage, need larger max_stack_depth
-          export PGOPTIONS="-c max_stack_depth=16MB"
+          # Note: max is ~15.5MB depending on system ulimit
+          export PGOPTIONS="-c max_stack_depth=8MB"
           export PG_PROBACKUP_TEST_BASIC=ON
           export PGPROBACKUP_GDB=OFF
           uv run pytest -v -n2 -x -k "test_basic" --timeout=300
@@ -170,7 +171,7 @@ jobs:
           make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres \
             CC=clang \
             CFLAGS="-fsanitize=thread -fno-omit-frame-pointer -O1 -g" \
-            LDFLAGS="-fsanitize=thread" \
+            LDFLAGS="-fsanitize=thread -Wl,-rpath,$PGHOME/lib" \
             clean install
 
       - name: Install uv
