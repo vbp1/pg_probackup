@@ -1132,6 +1132,7 @@ class ProbackupTest:
             '-B', backup_dir,
             '--instance={0}'.format(instance),
             # "-D", pgdata,
+            '-h', '127.0.0.1',
             '-p', '%i' % node.port,
             '-d', datname
         ]
