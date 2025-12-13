@@ -1593,7 +1593,7 @@ class IncrRestoreTest(ProbackupTest, unittest.TestCase):
         """
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, 'node'),
-            set_replication=True, initdb_params=['--no-data-checksums'])
+            set_replication=True)
 
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, 'backup')
         self.init_pb(backup_dir)
