@@ -18,7 +18,7 @@ skip_test = False
 
 
 try:
-    from pexpect import *
+    from pexpect import EOF, TIMEOUT, ExceptionPexpect, spawn
 except ImportError:
     skip_test = True
 
