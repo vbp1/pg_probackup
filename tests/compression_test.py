@@ -1266,13 +1266,21 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         node.slow_start()
 
         # Create table with random (incompressible) data
-        # Using gen_random_bytes to generate truly random data
-        node.safe_psql("postgres", "create extension if not exists pgcrypto")
-
+        # Using md5() with random() to generate pseudo-random data without pgcrypto extension
+        # Concatenating multiple md5 hashes creates ~500 bytes of poorly compressible data
         node.safe_psql(
             "postgres",
             "create table t_random as select i as id, "
-            "gen_random_bytes(500) as random_data "
+            "decode("
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text) || "
+            "md5(random()::text || i::text) || md5(random()::text || i::text), "
+            "'hex') as random_data "
             "from generate_series(0,5000) i",
         )
 
