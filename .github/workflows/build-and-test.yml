@@ -94,6 +94,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1
         with:
           key: pg-${{ matrix.pg_version }}
+          append-timestamp: false
 
       - name: Create PostgreSQL directory
         run: sudo mkdir -p $PGHOME && sudo chown $USER $PGHOME
@@ -244,6 +245,7 @@ jobs:
         uses: hendrikmuhs/ccache-action@v1
         with:
           key: pg-${{ matrix.pg_version }}
+          append-timestamp: false
 
       - name: Create PostgreSQL directory
         run: sudo mkdir -p $PGHOME && sudo chown $USER $PGHOME
