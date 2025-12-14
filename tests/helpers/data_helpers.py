@@ -71,7 +71,7 @@ class tail_file:  # snake case to immitate function
             elif regex is not None:
                 msg += f"/{regex}/"
             msg += f" in {self.filename}"
-            raise unittest.TestCase.failureException(msg)
+            raise unittest.TestCase.failureException(msg) from None
 
     def wait_shutdown(self):
         self.wait(contains="database system is shut down")

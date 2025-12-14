@@ -166,7 +166,7 @@ class AuthTest(unittest.TestCase):
         try:
             self.node.slow_start()
         except StartNodeException:
-            raise unittest.skip("Node hasn't started")
+            raise unittest.skip("Node hasn't started") from None
 
         version = self.pb.get_version(self.node)
         if version < 150000:

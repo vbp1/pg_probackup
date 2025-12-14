@@ -325,7 +325,7 @@ class ProbackupTest:
                 stderr=subprocess.STDOUT,
             ).decode("utf-8")
         except subprocess.CalledProcessError as e:
-            raise ProbackupException(e.output.decode("utf-8"))
+            raise ProbackupException(e.output.decode("utf-8")) from e
 
         if self.probackup_old_path:
             subprocess.check_output(
@@ -910,7 +910,7 @@ class ProbackupTest:
                 else:
                     return self.output
         except subprocess.CalledProcessError as e:
-            raise ProbackupException(e.output.decode("utf-8").replace("\r", ""), self.cmd)
+            raise ProbackupException(e.output.decode("utf-8").replace("\r", ""), self.cmd) from e
 
     def run_binary(self, command, asynchronous=False, env=None):
         if not env:
@@ -927,7 +927,7 @@ class ProbackupTest:
                 self.output = subprocess.check_output(command, stderr=subprocess.STDOUT, env=env).decode("utf-8")
                 return self.output
         except subprocess.CalledProcessError as e:
-            raise ProbackupException(e.output.decode("utf-8"), command)
+            raise ProbackupException(e.output.decode("utf-8"), command) from e
 
     def init_pb(self, backup_dir, options=None, old_binary=False):
         if options is None:
@@ -1881,7 +1881,7 @@ class GDBobj:
         try:
             gdb_version, _ = subprocess.Popen(["gdb", "--version"], stdout=subprocess.PIPE).communicate()
         except OSError:
-            raise GdbException("Couldn't find gdb on the path")
+            raise GdbException("Couldn't find gdb on the path") from None
 
         self.base_cmd = [
             "gdb",
