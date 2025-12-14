@@ -5,6 +5,7 @@ import sys
 
 import pytest
 
+
 # Cache for PG version to avoid repeated calls
 _pg_version_cache = None
 
@@ -44,7 +45,6 @@ def pytest_collection_modifyitems(config, items):
     old_binary = os.environ.get("PGPROBACKUPBIN_OLD")
     gdb_enabled = os.environ.get("PGPROBACKUP_GDB") == "ON"
     archive_compression = os.environ.get("ARCHIVE_COMPRESSION") == "ON"
-    pg_version = get_pg_version()
     is_windows = sys.platform == "win32"
 
     # Define skip markers
