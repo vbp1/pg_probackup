@@ -9,7 +9,7 @@ def _tail_file(file, linetimeout, totaltimeout):
         waits = 0
         while waits < linetimeout:
             line = f.readline()
-            if line == '':
+            if line == "":
                 waits += 1
                 time.sleep(1)
                 continue
@@ -21,7 +21,7 @@ def _tail_file(file, linetimeout, totaltimeout):
             raise TimeoutError("line timeout tailing %s" % (file,))
 
 
-class tail_file: # snake case to immitate function
+class tail_file:  # snake case to immitate function
     def __init__(self, filename, *, linetimeout=10, totaltimeout=60, collect=False):
         self.filename = filename
         self.tailer = _tail_file(filename, linetimeout, totaltimeout)
@@ -42,8 +42,7 @@ class tail_file: # snake case to immitate function
     @property
     def content(self):
         if not self.collect:
-            raise AttributeError("content collection is not enabled",
-                                 name="content", obj=self)
+            raise AttributeError("content collection is not enabled", name="content", obj=self)
         if not self._content:
             self._content = "".join(self.lines)
         return self._content
@@ -56,9 +55,9 @@ class tail_file: # snake case to immitate function
         self.drop_content()
         self.collect = False
 
-    def wait(self, *, contains:str = None, regex:str = None):
-        assert contains != None or regex != None
-        assert contains == None or regex == None
+    def wait(self, *, contains: str = None, regex: str = None):
+        assert contains is not None or regex is not None
+        assert contains is None or regex is None
         try:
             for line in self:
                 if contains is not None and contains in line:
@@ -72,7 +71,7 @@ class tail_file: # snake case to immitate function
             elif regex is not None:
                 msg += f"/{regex}/"
             msg += f" in {self.filename}"
-            raise unittest.TestCase.failureException(msg)
+            raise unittest.TestCase.failureException(msg) from None
 
     def wait_shutdown(self):
-        self.wait(contains='database system is shut down')
+        self.wait(contains="database system is shut down")
