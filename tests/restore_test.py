@@ -1910,13 +1910,11 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
             self.assertNotIn(file, logfile_content)
 
     # @unittest.skip("skip")
+    @pytest.mark.pg_version(110000)
     def test_pg_11_group_access(self):
         """
         test group access for PG >= 11
         """
-        if self.pg_config_version < self.version_to_num("11.0"):
-            self.skipTest("You need PostgreSQL >= 11 for this test")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             set_replication=True,
@@ -3045,6 +3043,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         except QueryException as e:
             self.assertIn("FATAL", e.message)
 
+    @pytest.mark.pg_version(120000)
     def test_pg_12_probackup_recovery_conf_compatibility(self):
         """
         https://github.com/postgrespro/pg_probackup/issues/249
@@ -3053,8 +3052,6 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         """
         if not self.probackup_old_path:
             self.skipTest("You must specify PGPROBACKUPBIN_OLD for run this test")
-        if self.pg_config_version < self.version_to_num("12.0"):
-            self.skipTest("You need PostgreSQL >= 12 for this test")
 
         if self.version_to_num(self.old_probackup_version) >= self.version_to_num("2.4.5"):
             self.assertTrue(False, "You need pg_probackup < 2.4.5 for this test")
@@ -3112,16 +3109,13 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
         node.slow_start()
 
+    @pytest.mark.pg_version(120000)
     def test_drop_postgresql_auto_conf(self):
         """
         https://github.com/postgrespro/pg_probackup/issues/249
 
         pg_probackup version must be 12 or greater
         """
-
-        if self.pg_config_version < self.version_to_num("12.0"):
-            self.skipTest("You need PostgreSQL >= 12 for this test")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"), initdb_params=["--data-checksums"]
@@ -3151,16 +3145,13 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
         self.assertTrue(os.path.exists(auto_path))
 
+    @pytest.mark.pg_version(120000)
     def test_truncate_postgresql_auto_conf(self):
         """
         https://github.com/postgrespro/pg_probackup/issues/249
 
         pg_probackup version must be 12 or greater
         """
-
-        if self.pg_config_version < self.version_to_num("12.0"):
-            self.skipTest("You need PostgreSQL >= 12 for this test")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"), initdb_params=["--data-checksums"]

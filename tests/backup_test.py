@@ -5,6 +5,7 @@ import subprocess
 import unittest
 from time import sleep, time
 
+import pytest
 from testgres import QueryException
 
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest, base36enc
@@ -1285,6 +1286,7 @@ class BackupTest(ProbackupTest, unittest.TestCase):
         self.backup_node(backup_dir, "node", node, options=["--stream", "--slot=slot_1"])
 
     # @unittest.skip("skip")
+    @pytest.mark.pg_version(100000)
     def test_basic_temp_slot_for_stream_backup(self):
         """"""
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
@@ -1294,9 +1296,6 @@ class BackupTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"max_wal_size": "40MB"},
         )
-
-        if self.get_version(node) < self.version_to_num("10.0"):
-            self.skipTest("You need PostgreSQL >= 10 for this test")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", node)
@@ -1348,11 +1347,9 @@ class BackupTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(show_backup["status"], "OK")
 
     # @unittest.skip("skip")
+    @pytest.mark.pg_version(110000)
     def test_pg_11_adjusted_wal_segment_size(self):
         """"""
-        if self.pg_config_version < self.version_to_num("11.0"):
-            self.skipTest("You need PostgreSQL >= 11 for this test")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),

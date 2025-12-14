@@ -6,6 +6,8 @@ import unittest
 from sys import exit
 from time import sleep
 
+import pytest
+
 from .helpers.data_helpers import tail_file
 from .helpers.ptrack_helpers import ProbackupTest
 
@@ -873,6 +875,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
     # @unittest.expectedFailure
     # @unittest.skip("skip")
+    @pytest.mark.pg_version(110000)
     def test_concurrent_archiving(self):
         """
         Concurrent archiving from master, replica and cascade replica
@@ -880,10 +883,6 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
         For PG >= 11 it is expected to pass this test
         """
-
-        if self.pg_config_version < self.version_to_num("11.0"):
-            self.skipTest("You need PostgreSQL >= 11 for this test")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         master = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "master"),
@@ -1007,6 +1006,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
 
     # @unittest.expectedFailure
     # @unittest.skip("skip")
+    @pytest.mark.pg_version(100000)
     def test_archive_pg_receivexlog_compression_pg10(self):
         """Test backup with pg_receivewal compressed wal delivary method"""
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
@@ -1019,10 +1019,7 @@ class ArchiveTest(ProbackupTest, unittest.TestCase):
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", node)
         node.slow_start()
-        if self.get_version(node) < self.version_to_num("10.0"):
-            self.skipTest("You need PostgreSQL >= 10 for this test")
-        else:
-            pg_receivexlog_path = self.get_bin_path("pg_receivewal")
+        pg_receivexlog_path = self.get_bin_path("pg_receivewal")
 
         pg_receivexlog = self.run_binary(
             [

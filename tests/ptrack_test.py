@@ -4,15 +4,15 @@ import unittest
 from threading import Thread
 from time import sleep
 
+import pytest
 from testgres import QueryException, StartNodeException
 
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest, idx_ptrack
 
 
+@pytest.mark.pg_version(110000)
 class PtrackTest(ProbackupTest, unittest.TestCase):
     def setUp(self):
-        if self.pg_config_version < self.version_to_num("11.0"):
-            self.skipTest("You need PostgreSQL >= 11 for this test")
         self.fname = self.id().split(".")[3]
 
     # @unittest.skip("skip")

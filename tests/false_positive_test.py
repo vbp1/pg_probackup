@@ -2,6 +2,8 @@ import os
 import unittest
 from time import sleep
 
+import pytest
+
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
@@ -82,13 +84,11 @@ class FalsePositive(ProbackupTest, unittest.TestCase):
 
     # @unittest.skip("skip")
     @unittest.expectedFailure
+    @pytest.mark.pg_version(100000)
     def test_pg_10_waldir(self):
         """
         test group access for PG >= 11
         """
-        if self.pg_config_version < self.version_to_num("10.0"):
-            self.skipTest("You need PostgreSQL >= 10 for this test")
-
         wal_dir = os.path.join(os.path.join(self.tmp_path, self.module_name, self.fname), "wal_dir")
         import shutil
 
