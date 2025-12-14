@@ -1,5 +1,5 @@
-[![GitHub release](https://img.shields.io/github/v/release/postgrespro/pg_probackup?include_prereleases)](https://github.com/postgrespro/pg_probackup/releases/latest)
-[![Build Status](https://travis-ci.com/postgrespro/pg_probackup.svg?branch=master)](https://travis-ci.com/postgrespro/pg_probackup)
+[![GitHub release](https://img.shields.io/github/v/release/vbp1/pg_probackup?include_prereleases)](https://github.com/vbp1/pg_probackup/releases/latest)
+[![Build Status](https://github.com/vbp1/pg_probackup/actions/workflows/build-and-test.yml/badge.svg?branch=master)](https://github.com/vbp1/pg_probackup/actions/workflows/build-and-test.yml)
 
 # pg_probackup
 
