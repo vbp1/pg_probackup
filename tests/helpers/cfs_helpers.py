@@ -41,7 +41,7 @@ def find_by_pattern(dirs=None, pattern=None):
             try:
                 new_dirs += [os.path.join(d, f) for f in os.listdir(d)]
             except OSError:
-                if re.match(pattern,d):
+                if re.match(pattern, d):
                     files.append(d)
 
         if new_dirs:
@@ -77,8 +77,8 @@ def corrupt_file(filename):
 
     try:
         with open(filename, "rb+") as f:
-            f.seek(random.randint(int(0.1*file_size),int(0.8*file_size)))
-            f.write(random_string(0.1*file_size))
+            f.seek(random.randint(int(0.1 * file_size), int(0.8 * file_size)))
+            f.write(random_string(0.1 * file_size))
             f.close()
     except OSError:
         return False
@@ -88,6 +88,8 @@ def corrupt_file(filename):
 
 def random_string(n):
     a = string.ascii_letters + string.digits
-    random_str = ''.join([random.choice(a) for i in range(int(n)+1)])
+    random_str = "".join([random.choice(a) for i in range(int(n) + 1)])
     return str.encode(random_str)
+
+
 #    return ''.join([random.choice(a) for i in range(int(n)+1)])

@@ -45,25 +45,25 @@ from . import (
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
 
-    if 'PG_PROBACKUP_TEST_BASIC' in os.environ:
-        if os.environ['PG_PROBACKUP_TEST_BASIC'] == 'ON':
-            loader.testMethodPrefix = 'test_basic'
+    if "PG_PROBACKUP_TEST_BASIC" in os.environ:
+        if os.environ["PG_PROBACKUP_TEST_BASIC"] == "ON":
+            loader.testMethodPrefix = "test_basic"
 
-    if 'PG_PROBACKUP_PTRACK' in os.environ:
-        if os.environ['PG_PROBACKUP_PTRACK'] == 'ON':
+    if "PG_PROBACKUP_PTRACK" in os.environ:
+        if os.environ["PG_PROBACKUP_PTRACK"] == "ON":
             suite.addTests(loader.loadTestsFromModule(ptrack_test))
 
     # PG_PROBACKUP_LONG section for tests that are long
     # by design e.g. they contain loops, sleeps and so on
-    if 'PG_PROBACKUP_LONG' in os.environ:
-        if os.environ['PG_PROBACKUP_LONG'] == 'ON':
+    if "PG_PROBACKUP_LONG" in os.environ:
+        if os.environ["PG_PROBACKUP_LONG"] == "ON":
             suite.addTests(loader.loadTestsFromModule(time_consuming_test))
 
     suite.addTests(loader.loadTestsFromModule(auth_test))
     suite.addTests(loader.loadTestsFromModule(archive_test))
     suite.addTests(loader.loadTestsFromModule(backup_test))
     suite.addTests(loader.loadTestsFromModule(catchup_test))
-    if 'PGPROBACKUPBIN_OLD' in os.environ and os.environ['PGPROBACKUPBIN_OLD']:
+    if "PGPROBACKUPBIN_OLD" in os.environ and os.environ["PGPROBACKUPBIN_OLD"]:
         suite.addTests(loader.loadTestsFromModule(compatibility_test))
     suite.addTests(loader.loadTestsFromModule(checkdb_test))
     suite.addTests(loader.loadTestsFromModule(config_test))
@@ -97,6 +97,7 @@ def load_tests(loader, tests, pattern):
     suite.addTests(loader.loadTestsFromModule(CVE_2018_1058_test))
 
     return suite
+
 
 #   test_pgpro434_2 unexpected success
 # ToDo:

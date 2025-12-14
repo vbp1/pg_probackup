@@ -3,10 +3,10 @@ import unittest
 from .helpers.ptrack_helpers import ProbackupTest
 
 
-tblspace_name = 'cfs_tblspace'
+tblspace_name = "cfs_tblspace"
 
 
-class CfsValidateBackupNoenc(ProbackupTest,unittest.TestCase):
+class CfsValidateBackupNoenc(ProbackupTest, unittest.TestCase):
     def setUp(self):
         pass
 
@@ -17,6 +17,6 @@ class CfsValidateBackupNoenc(ProbackupTest,unittest.TestCase):
         pass
 
 
-#class CfsValidateBackupNoenc(CfsValidateBackupNoenc):
+# class CfsValidateBackupNoenc(CfsValidateBackupNoenc):
 #    os.environ["PG_CIPHER_KEY"] = "super_secret_cipher_key"
 #    super(CfsValidateBackupNoenc).setUp()
