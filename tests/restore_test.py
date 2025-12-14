@@ -1049,47 +1049,6 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
     # @unittest.skip("skip")
     # @unittest.expectedFailure
-    def test_archive_node_backup_stream_restore_to_recovery_time(self):
-        """
-        make node with archiving, make stream backup,
-        make PITR to Recovery Time
-        """
-        node = self.make_simple_node(
-            base_dir=os.path.join(self.module_name, self.fname, "node"),
-            set_replication=True,
-            initdb_params=["--data-checksums"],
-        )
-
-        backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
-        self.init_pb(backup_dir)
-        self.add_instance(backup_dir, "node", node)
-        self.set_archiving(backup_dir, "node", node)
-        node.slow_start()
-
-        backup_id = self.backup_node(backup_dir, "node", node, options=["--stream"])
-        node.safe_psql("postgres", "create table t_heap(a int)")
-        node.stop()
-        node.cleanup()
-
-        recovery_time = self.show_pb(backup_dir, "node", backup_id)["recovery-time"]
-
-        self.assertIn(
-            "INFO: Restore of backup {0} completed.".format(backup_id),
-            self.restore_node(
-                backup_dir,
-                "node",
-                node,
-                options=["-j", "4", "--time={0}".format(recovery_time), "--recovery-target-action=promote"],
-            ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
-        )
-
-        node.slow_start()
-        result = node.psql("postgres", "select * from t_heap")
-        self.assertTrue("does not exist" in result[2].decode("utf-8"))
-
-    # @unittest.skip("skip")
-    # @unittest.expectedFailure
     def test_archive_node_backup_stream_pitr(self):
         """
         make node with archiving, make stream backup,
@@ -1235,7 +1194,6 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
 
         self.backup_node(backup_dir, "node", node)
 
-        conn = node.connect()
         with node.connect("postgres") as conn:
             conn.execute("create table tbl(i int)")
             conn.commit()

@@ -132,7 +132,6 @@ class ExcludeTest(ProbackupTest, unittest.TestCase):
         self.add_instance(backup_dir, "node", node)
         node.slow_start()
 
-        conn = node.connect()
         with node.connect("postgres") as conn:
             conn.execute("create unlogged table test as select generate_series(0,5005000)::text")
             conn.commit()
