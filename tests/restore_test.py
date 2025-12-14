@@ -1308,8 +1308,7 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         #                ' | ', 'grep', 'Btree', ''
         #            ], async=False)
 
-        if pg_xlogdump.returncode:
-            self.assertFalse(True, "Failed to start pg_wal_dump: {0}".format(pg_receivexlog.communicate()[1]))
+        # NOTE: pg_xlogdump check was removed as unreachable (variables were commented out)
 
     # @unittest.skip("skip")
     def test_restore_chain(self):
