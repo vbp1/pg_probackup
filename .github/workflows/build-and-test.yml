@@ -1,0 +1,333 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  PGHOME: /pg
+
+jobs:
+  build-and-test:
+    name: PG ${{ matrix.pg_version }} (${{ matrix.mode }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Basic tests for all supported versions
+          - pg_version: "18"
+            pg_branch: "REL_18_STABLE"
+            ptrack_branch: "REL_18_STABLE"
+            mode: "basic"
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "basic"
+          - pg_version: "16"
+            pg_branch: "REL_16_STABLE"
+            ptrack_branch: "REL_16_STABLE"
+            mode: "basic"
+          - pg_version: "15"
+            pg_branch: "REL_15_STABLE"
+            ptrack_branch: "REL_15_STABLE"
+            mode: "basic"
+          - pg_version: "14"
+            pg_branch: "REL_14_STABLE"
+            ptrack_branch: "REL_14_STABLE"
+            mode: "basic"
+          - pg_version: "13"
+            pg_branch: "REL_13_STABLE"
+            ptrack_branch: "REL_13_STABLE"
+            mode: "basic"
+          # Full tests for latest stable (split into 3 parallel groups)
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "full-1"
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "full-2"
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "full-3"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            libreadline-dev \
+            zlib1g-dev \
+            libzstd-dev \
+            liblz4-dev \
+            libssl-dev \
+            libicu-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libgss-dev \
+            libkrb5-dev \
+            bison \
+            flex \
+            perl \
+            libperl-dev \
+            libipc-run-perl \
+            tcl-dev \
+            python3 \
+            python3-dev \
+            gettext \
+            gdb \
+            lcov \
+            openssh-client \
+            openssh-server \
+            ccache
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: pg-${{ matrix.pg_version }}
+
+      - name: Create PostgreSQL directory
+        run: sudo mkdir -p $PGHOME && sudo chown $USER $PGHOME
+
+      - name: Clone PostgreSQL
+        run: |
+          git clone https://github.com/postgres/postgres.git \
+            -b ${{ matrix.pg_branch }} --depth=1
+
+      - name: Clone and apply ptrack
+        if: matrix.ptrack_branch != 'OFF'
+        run: |
+          git clone https://github.com/postgrespro/ptrack.git \
+            -b master --depth=1 postgres/contrib/ptrack
+          cd postgres
+          git apply -3 contrib/ptrack/patches/${{ matrix.ptrack_branch }}-ptrack-core.diff
+
+      - name: Apply pg_probackup patch for PG18+
+        if: matrix.pg_branch == 'REL_18_STABLE' || matrix.pg_branch == 'master'
+        run: |
+          cd postgres
+          git apply -3 ../patches/${{ matrix.pg_branch }}_pg_probackup.patch
+
+      - name: Build PostgreSQL
+        run: |
+          cd postgres
+          CC='ccache gcc' CFLAGS="-Og" ./configure --prefix=$PGHOME \
+            --enable-debug --enable-cassert --enable-depend \
+            --enable-tap-tests --enable-nls
+          make -s -j$(nproc) install
+          make -s -j$(nproc) -C contrib/ install
+
+      - name: Build ptrack extension
+        if: matrix.ptrack_branch != 'OFF'
+        run: |
+          cd postgres
+          make -C contrib/ptrack install
+
+      - name: Build pg_probackup
+        run: |
+          export PATH=$PGHOME/bin:$PATH
+          export PG_CONFIG=$(which pg_config)
+          make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres install
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      - name: Setup SSH for remote tests
+        run: |
+          ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -N ""
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+          sudo /etc/init.d/ssh start
+
+      - name: Configure ptrace scope
+        run: sudo sysctl kernel.yama.ptrace_scope=0
+
+      - name: Run tests
+        run: |
+          export PATH=$PGHOME/bin:$PATH
+          export PG_CONFIG=$(which pg_config)
+          export PGPROBACKUP_GDB=ON
+          if [ "${{ matrix.ptrack_branch }}" != "OFF" ]; then
+            export PG_PROBACKUP_PTRACK=ON
+          else
+            export PG_PROBACKUP_PTRACK=OFF
+          fi
+
+          if [ "${{ matrix.mode }}" = "basic" ]; then
+            export PG_PROBACKUP_TEST_BASIC=ON
+            uv run pytest -v -n4 -k "test_basic"
+            uv run pytest -v -n4 tests/init_test.py
+          elif [ "${{ matrix.mode }}" = "full-1" ]; then
+            # Group 1: backup, restore, validate (~147 tests)
+            uv run pytest -v -n4 tests/backup_test.py tests/restore_test.py tests/validate_test.py
+          elif [ "${{ matrix.mode }}" = "full-2" ]; then
+            # Group 2: ptrack, merge, incr_restore, archive (~160 tests)
+            uv run pytest -v -n4 tests/ptrack_test.py tests/merge_test.py tests/incr_restore_test.py tests/archive_test.py
+          elif [ "${{ matrix.mode }}" = "full-3" ]; then
+            # Group 3: all remaining tests
+            uv run pytest -v -n4 --ignore=tests/backup_test.py --ignore=tests/restore_test.py --ignore=tests/validate_test.py \
+              --ignore=tests/ptrack_test.py --ignore=tests/merge_test.py --ignore=tests/incr_restore_test.py --ignore=tests/archive_test.py
+          else
+            uv run pytest -v -n4 -k "${{ matrix.mode }}"
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-pg${{ matrix.pg_version }}-${{ matrix.mode }}
+          path: |
+            /tmp/probackup*
+          retention-days: 7
+
+  # Allow failures for bleeding edge
+  build-and-test-experimental:
+    name: PG ${{ matrix.pg_version }} (experimental)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pg_version: "19"
+            pg_branch: "master"
+            ptrack_branch: "master"
+            mode: "basic"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            libreadline-dev \
+            zlib1g-dev \
+            libzstd-dev \
+            liblz4-dev \
+            libssl-dev \
+            libicu-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libgss-dev \
+            libkrb5-dev \
+            bison \
+            flex \
+            perl \
+            libperl-dev \
+            libipc-run-perl \
+            tcl-dev \
+            python3 \
+            python3-dev \
+            gettext \
+            gdb \
+            lcov \
+            openssh-client \
+            openssh-server \
+            ccache
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: pg-${{ matrix.pg_version }}
+
+      - name: Create PostgreSQL directory
+        run: sudo mkdir -p $PGHOME && sudo chown $USER $PGHOME
+
+      - name: Clone PostgreSQL
+        run: |
+          git clone https://github.com/postgres/postgres.git \
+            -b ${{ matrix.pg_branch }} --depth=1
+
+      - name: Clone and apply ptrack
+        run: |
+          git clone https://github.com/postgrespro/ptrack.git \
+            -b master --depth=1 postgres/contrib/ptrack
+          cd postgres
+          git apply -3 contrib/ptrack/patches/${{ matrix.ptrack_branch }}-ptrack-core.diff || true
+
+      - name: Apply pg_probackup patch
+        run: |
+          cd postgres
+          if [ -f ../patches/${{ matrix.pg_branch }}_pg_probackup.patch ]; then
+            git apply -3 ../patches/${{ matrix.pg_branch }}_pg_probackup.patch
+          fi
+
+      - name: Build PostgreSQL
+        run: |
+          cd postgres
+          CC='ccache gcc' CFLAGS="-Og" ./configure --prefix=$PGHOME \
+            --enable-debug --enable-cassert --enable-depend \
+            --enable-tap-tests --enable-nls
+          make -s -j$(nproc) install
+          make -s -j$(nproc) -C contrib/ install
+
+      - name: Build ptrack extension
+        run: |
+          cd postgres
+          make -C contrib/ptrack install || true
+
+      - name: Build pg_probackup
+        run: |
+          export PATH=$PGHOME/bin:$PATH
+          export PG_CONFIG=$(which pg_config)
+          make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres install
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      - name: Setup SSH for remote tests
+        run: |
+          ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -N ""
+          cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+          ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+          sudo /etc/init.d/ssh start
+
+      - name: Configure ptrace scope
+        run: sudo sysctl kernel.yama.ptrace_scope=0
+
+      - name: Run tests
+        run: |
+          export PATH=$PGHOME/bin:$PATH
+          export PG_CONFIG=$(which pg_config)
+          export PGPROBACKUP_GDB=ON
+          export PG_PROBACKUP_TEST_BASIC=ON
+
+          # Check if ptrack extension was successfully installed
+          PKGLIBDIR=$(pg_config --pkglibdir)
+          if [ -f "$PKGLIBDIR/ptrack.so" ]; then
+            echo "ptrack extension found, enabling ptrack tests"
+            export PG_PROBACKUP_PTRACK=ON
+          else
+            echo "ptrack extension not found, disabling ptrack tests"
+            export PG_PROBACKUP_PTRACK=OFF
+          fi
+
+          uv run pytest -v -n4 -k "test_basic"
+          uv run pytest -v -n4 tests/init_test.py
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-pg${{ matrix.pg_version }}-experimental
+          path: |
+            /tmp/probackup*
+          retention-days: 7

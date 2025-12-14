@@ -1,0 +1,88 @@
+name: Lint
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  ruff:
+    name: Python Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Run ruff check
+        run: uv run ruff check tests/
+
+      - name: Run ruff format check
+        run: uv run ruff format --check tests/
+
+  cppcheck:
+    name: C/C++ Static Analysis (cppcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck
+        run: |
+          cppcheck \
+            --error-exitcode=1 \
+            --suppress=missingIncludeSystem \
+            --quiet \
+            src/
+
+  clang-analyzer:
+    name: Clang Static Analyzer
+    runs-on: ubuntu-24.04
+    env:
+      PGHOME: /pg
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang clang-tools \
+            build-essential \
+            libreadline-dev \
+            zlib1g-dev \
+            libzstd-dev \
+            liblz4-dev \
+            libssl-dev \
+            bison flex
+
+      - name: Clone PostgreSQL
+        run: |
+          git clone https://github.com/postgres/postgres.git \
+            -b REL_17_STABLE --depth=1
+
+      - name: Build PostgreSQL
+        run: |
+          sudo mkdir -p $PGHOME && sudo chown $USER $PGHOME
+          cd postgres
+          ./configure --prefix=$PGHOME --without-icu
+          make -s -j$(nproc) install
+
+      - name: Run Clang Static Analyzer
+        run: |
+          export PATH=$PGHOME/bin:$PATH
+          export PG_CONFIG=$(which pg_config)
+          scan-build --status-bugs -o scan-results \
+            make USE_PGXS=1 top_srcdir=$GITHUB_WORKSPACE/postgres clean all
+
+      - name: Upload analysis results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang-analyzer-results
+          path: scan-results/
+          retention-days: 7

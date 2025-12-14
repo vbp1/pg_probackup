@@ -1,0 +1,6 @@
+# Suppress all leaks from PostgreSQL source code (not our responsibility)
+# This matches any frame containing "postgres/src" in the path
+leak:postgres/src
+
+# Suppress leaks from PostgreSQL libraries
+leak:libpq
