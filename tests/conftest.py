@@ -11,7 +11,10 @@ _pg_version_cache = None
 
 
 def get_pg_version():
-    """Get PostgreSQL version from pg_config."""
+    """Get PostgreSQL version from pg_config.
+
+    Returns version as integer: e.g., 140500 for PG 14.5, 110000 for PG 11.0
+    """
     global _pg_version_cache
     if _pg_version_cache is not None:
         return _pg_version_cache
@@ -31,6 +34,12 @@ def get_pg_version():
     return _pg_version_cache
 
 
+def pytest_configure(config):
+    """Register custom markers."""
+    config.addinivalue_line("markers", "ptrack: mark test as requiring ptrack extension")
+    config.addinivalue_line("markers", "pg_version(min_version): mark test as requiring minimum PG version")
+
+
 def pytest_pycollect_makeitem(collector, name, obj):
     """Skip ProbackupTest base class to avoid collection warning."""
     if name == "ProbackupTest":
@@ -45,6 +54,7 @@ def pytest_collection_modifyitems(config, items):
     old_binary = os.environ.get("PGPROBACKUPBIN_OLD")
     gdb_enabled = os.environ.get("PGPROBACKUP_GDB") == "ON"
     archive_compression = os.environ.get("ARCHIVE_COMPRESSION") == "ON"
+    pg_version = get_pg_version()
     is_windows = sys.platform == "win32"
 
     # Define skip markers
@@ -60,8 +70,20 @@ def pytest_collection_modifyitems(config, items):
         nodeid_lower = item.nodeid.lower()
 
         # Skip ptrack tests if ptrack not enabled
-        if not ptrack_enabled and "ptrack" in nodeid_lower:
-            item.add_marker(skip_ptrack)
+        # Check both nodeid (for ptrack_test.py) and explicit @pytest.mark.ptrack marker
+        if not ptrack_enabled:
+            if "ptrack" in nodeid_lower:
+                item.add_marker(skip_ptrack)
+            elif item.get_closest_marker("ptrack"):
+                item.add_marker(skip_ptrack)
+
+        # Skip tests requiring specific PG version
+        pg_version_marker = item.get_closest_marker("pg_version")
+        if pg_version_marker and pg_version:
+            min_version = pg_version_marker.args[0] if pg_version_marker.args else 0
+            if pg_version < min_version:
+                major = min_version // 10000
+                item.add_marker(pytest.mark.skip(reason=f"Requires PostgreSQL >= {major}"))
 
         # Skip compatibility tests if old binary not available
         if not old_binary and "compatibility_test" in nodeid_lower:

@@ -2,6 +2,8 @@ import os
 import subprocess
 import unittest
 
+import pytest
+
 from .helpers.ptrack_helpers import ProbackupTest
 
 
@@ -151,11 +153,9 @@ class DeleteTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(show_backups[1]["status"], "OK")
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_delete_increment_ptrack(self):
         """delete increment and all after him"""
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             ptrack_enable=self.ptrack,

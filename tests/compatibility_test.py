@@ -2,6 +2,8 @@ import os
 import subprocess
 import unittest
 
+import pytest
+
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
@@ -305,12 +307,9 @@ class CompatibilityTest(ProbackupTest, unittest.TestCase):
 
     # @unittest.expectedFailure
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_backward_compatibility_ptrack(self):
         """Description in jira issue PGPRO-434"""
-
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),

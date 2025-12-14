@@ -5,6 +5,7 @@ import time
 import unittest
 from datetime import datetime, timedelta
 
+import pytest
 from testgres import QueryException
 
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
@@ -695,6 +696,7 @@ class MergeTest(ProbackupTest, unittest.TestCase):
 
         self.assertEqual(result1, result2)
 
+    @pytest.mark.ptrack
     def test_merge_ptrack_truncate(self):
         """
         make node, create table, take full backup,
@@ -702,9 +704,6 @@ class MergeTest(ProbackupTest, unittest.TestCase):
         take page backup, merge full and page,
         restore last page backup and check data correctness
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),

@@ -2,6 +2,8 @@ import os
 import unittest
 from pathlib import Path
 
+import pytest
+
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
@@ -158,13 +160,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         dst_pg.stop()
         # self.assertEqual(1, 0, 'Stop test')
 
+    @pytest.mark.ptrack
     def test_basic_ptrack_catchup(self):
         """
         Test ptrack catchup
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),
@@ -294,13 +294,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         # Cleanup
         src_pg.stop()
 
+    @pytest.mark.ptrack
     def test_tli_ptrack_catchup(self):
         """
         Test that we correctly follow timeline change with ptrack catchup
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),
@@ -429,13 +427,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         # Cleanup
         src_pg.stop()
 
+    @pytest.mark.ptrack
     def test_table_drop_with_ptrack(self):
         """
         Test that dropped table in source will be dropped in ptrack catchup'ed instance too
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),
@@ -534,13 +530,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         # Cleanup
         src_pg.stop()
 
+    @pytest.mark.ptrack
     def test_tablefile_truncation_with_ptrack(self):
         """
         Test that truncated table in source will be truncated in ptrack catchup'ed instance too
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),
@@ -992,13 +986,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         # Cleanup
         dst_pg.stop()
 
+    @pytest.mark.ptrack
     def test_unclean_ptrack_catchup(self):
         """
         Test that we correctly recover uncleanly shutdowned destination
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),
@@ -1467,13 +1459,11 @@ class CatchupTest(ProbackupTest, unittest.TestCase):
         # Cleanup
         src_pg.stop()
 
+    @pytest.mark.ptrack
     def test_dry_run_catchup_ptrack(self):
         """
         Test dry-run option for catchup in incremental ptrack mode
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         # preparation 1: source
         src_pg = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "src"),

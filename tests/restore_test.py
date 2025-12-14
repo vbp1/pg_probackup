@@ -7,6 +7,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from shutil import copyfile
 
+import pytest
 from testgres import QueryException, StartNodeException
 
 from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
@@ -441,11 +442,9 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(len(node.execute("postgres", "SELECT * FROM tbl0005")), 1)
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_restore_full_ptrack_archive(self):
         """recovery to latest from archive full+ptrack backups"""
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             initdb_params=["--data-checksums"],
@@ -486,11 +485,9 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(before, after)
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_restore_ptrack(self):
         """recovery to latest from archive full+ptrack+ptrack backups"""
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             initdb_params=["--data-checksums"],
@@ -537,11 +534,9 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(before, after)
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_restore_full_ptrack_stream(self):
         """recovery in stream mode to latest from full + ptrack backups"""
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             set_replication=True,
@@ -583,14 +578,12 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(before, after)
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_restore_full_ptrack_under_load(self):
         """
         recovery to latest from full + ptrack backups
         with loads when ptrack backup do
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             set_replication=True,
@@ -636,14 +629,12 @@ class RestoreTest(ProbackupTest, unittest.TestCase):
         self.assertEqual(bbalance, delta)
 
     # @unittest.skip("skip")
+    @pytest.mark.ptrack
     def test_restore_full_under_load_ptrack(self):
         """
         recovery to latest from full + page backups
         with loads when full backup do
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             set_replication=True,

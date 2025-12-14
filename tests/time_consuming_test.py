@@ -2,10 +2,14 @@ import os
 import unittest
 from time import sleep
 
+import pytest
+
 from .helpers.ptrack_helpers import ProbackupTest
 
 
 class TimeConsumingTests(ProbackupTest, unittest.TestCase):
+    @pytest.mark.ptrack
+    @pytest.mark.pg_version(110000)
     def test_pbckp150(self):
         """
         https://jira.postgrespro.ru/browse/PBCKP-150
@@ -14,11 +18,6 @@ class TimeConsumingTests(ProbackupTest, unittest.TestCase):
         run pgbench, vacuum VERBOSE FULL and ptrack backups in parallel
         """
         # init node
-        if self.pg_config_version < self.version_to_num("11.0"):
-            self.skipTest("You need PostgreSQL >= 11 for this test")
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
         node = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "node"),
             set_replication=True,
