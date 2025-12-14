@@ -239,7 +239,7 @@ class ProbackupTest:
         for e in envs_list:
             try:
                 del self.test_env[e]
-            except:
+            except KeyError:
                 pass
 
         self.test_env["LC_MESSAGES"] = "C"
@@ -255,7 +255,7 @@ class ProbackupTest:
             testgres.configure_testgres(
                 cache_initdb=False, cached_initdb_dir=False, cache_pg_config=False, node_cleanup_full=False
             )
-        except:
+        except Exception:
             pass
 
         self.helpers_path = os.path.dirname(os.path.realpath(__file__))
@@ -263,7 +263,7 @@ class ProbackupTest:
         self.tmp_path = os.path.abspath(os.path.join(self.dir_path, "tmp_dirs"))
         try:
             os.makedirs(os.path.join(self.dir_path, "tmp_dirs"))
-        except:
+        except OSError:
             pass
 
         self.user = self.get_username()
@@ -1321,7 +1321,7 @@ class ProbackupTest:
             for line in recovery_conf:
                 try:
                     key, value = line.split("=")
-                except:
+                except ValueError:
                     continue
                 out_dict[key.strip()] = value.strip(" '").replace("'\n", "")
         return out_dict

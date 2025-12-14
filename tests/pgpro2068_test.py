@@ -99,7 +99,7 @@ class BugTest(ProbackupTest, unittest.TestCase):
         # just to be sure
         try:
             replica.stop(["-m", "immediate", "-D", replica.data_dir])
-        except:
+        except Exception:
             pass
 
         # MinRecLSN = replica.get_control_data()['Minimum recovery ending location']
