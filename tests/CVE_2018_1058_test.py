@@ -115,7 +115,7 @@ class CVE_2018_1058(ProbackupTest, unittest.TestCase):
             self.assertEqual(
                 1,
                 0,
-                "Expecting Error because amcheck{,_next} not installed\n Output: {0} \n CMD: {1}".format(
+                "Expecting Error because amcheck{{,_next}} not installed\n Output: {0} \n CMD: {1}".format(
                     repr(self.output), self.cmd
                 ),
             )

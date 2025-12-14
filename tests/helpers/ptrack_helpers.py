@@ -112,11 +112,9 @@ class ProbackupException(Exception):
 
 
 class PostgresNodeExtended(testgres.PostgresNode):
-    def __init__(self, base_dir=None, port=None, bin_dir=None, *args, **kwargs):
-        assert port is None or type(port) == int
-        super().__init__(
-            name="test", base_dir=base_dir, port=port, bin_dir=bin_dir, *args, **kwargs
-        )
+    def __init__(self, base_dir=None, port=None, bin_dir=None, **kwargs):
+        assert port is None or isinstance(port, int)
+        super().__init__(name="test", base_dir=base_dir, port=port, bin_dir=bin_dir, **kwargs)
         self.is_started = False
 
     def slow_start(self, replica=False):
@@ -1215,7 +1213,9 @@ class ProbackupTest:
 
                 return specific_record
 
-    def show_archive(self, backup_dir, instance=None, options=None, as_text=False, as_json=True, old_binary=False, tli=0):
+    def show_archive(
+        self, backup_dir, instance=None, options=None, as_text=False, as_json=True, old_binary=False, tli=0
+    ):
         if options is None:
             options = []
         cmd_list = [
@@ -1668,13 +1668,13 @@ class ProbackupTest:
                     if file_relpath.endswith(".cfm"):
                         content = f.read()
                         zero64 = b"\x00" * 64
-                        l = len(content)
-                        while l > 64:
-                            s = (l - 1) & ~63
-                            if content[s:l] != zero64[: l - s]:
+                        content_len = len(content)
+                        while content_len > 64:
+                            s = (content_len - 1) & ~63
+                            if content[s:content_len] != zero64[: content_len - s]:
                                 break
-                            l = s
-                        content = content[:l]
+                            content_len = s
+                        content = content[:content_len]
                         digest = hashlib.md5(content)
                     else:
                         digest = hashlib.md5()
