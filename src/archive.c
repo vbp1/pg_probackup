@@ -348,6 +348,12 @@ push_file(WALSegno *xlogfile, const char *archive_status_dir,
 		rc = push_file_internal_gz(xlogfile, pg_xlog_dir, archive_dir,
 								   overwrite, no_sync, compress_level,
 								   archive_timeout);
+#else
+	else
+	{
+		elog(ERROR, "Compression requested but pg_probackup was built without zlib support");
+		rc = 1; /* Not reached, but keeps compiler happy */
+	}
 #endif
 
 	pg_atomic_write_u32(&xlogfile->done, 1);

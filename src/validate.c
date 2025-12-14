@@ -486,7 +486,7 @@ do_validate_instance(InstanceState *instanceState)
 	/* Examine backups one by one and validate them */
 	for (i = 0; i < parray_num(backups); i++)
 	{
-		pgBackup   *base_full_backup;
+		pgBackup   *base_full_backup = NULL;
 
 		current_backup = (pgBackup *) parray_get(backups, i);
 
@@ -559,11 +559,7 @@ do_validate_instance(InstanceState *instanceState)
 			/* chain is whole, all parents are valid at first glance,
 			 * current backup validation can proceed
 			 */
-			else
-				base_full_backup = tmp_backup;
 		}
-		else
-			base_full_backup = current_backup;
 
 		/* Do not interrupt, validate the next backup */
 		if (!lock_backup(current_backup, true, false))
