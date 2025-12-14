@@ -23,9 +23,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
         )
 
-        if self.get_version(node1) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node1", node1)
 
@@ -87,12 +84,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
         make node, take full backup, restore it and make replica from it,
         take full stream backup from replica
         """
-        if not self.ptrack:
-            self.skipTest("Skipped because ptrack support is disabled")
-
-        if self.pg_config_version > self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         backup_dir = os.path.join(self.tmp_path, self.module_name, self.fname, "backup")
         master = self.make_simple_node(
             base_dir=os.path.join(self.module_name, self.fname, "master"),
@@ -221,9 +212,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"archive_timeout": "10s", "checkpoint_timeout": "30s", "max_wal_size": "32MB"},
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
@@ -358,9 +346,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"archive_timeout": "10s"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
         self.set_archiving(backup_dir, "master", master)
@@ -406,9 +391,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"archive_timeout": "10s"},
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
@@ -501,9 +483,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"archive_timeout": "10s", "checkpoint_timeout": "30s", "max_wal_size": "32MB"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
         self.set_archiving(backup_dir, "master", master)
@@ -575,9 +554,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", master)
         self.set_archiving(backup_dir, "node", master)
@@ -639,9 +615,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica"},
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
@@ -721,9 +694,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", master)
         self.set_archiving(backup_dir, "node", master)
@@ -783,9 +753,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica"},
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", master)
@@ -868,9 +835,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica", "shared_buffers": "128MB"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
         self.set_archiving(backup_dir, "master", master)
@@ -948,9 +912,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica", "shared_buffers": "128MB"},
         )
 
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
         master.slow_start()
@@ -1011,9 +972,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"checkpoint_timeout": "1h", "wal_level": "replica"},
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
@@ -1114,9 +1072,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             initdb_params=["--data-checksums"],
             pg_options={"checkpoint_timeout": "30s", "archive_timeout": "30s"},
         )
-
-        if self.get_version(node1) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", node1)
@@ -1223,9 +1178,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             pg_options={"checkpoint_timeout": "30s", "archive_timeout": "30s"},
         )
 
-        if self.get_version(node1) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
-
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "node", node1)
         self.set_archiving(backup_dir, "node", node1)
@@ -1328,9 +1280,6 @@ class ReplicaTest(ProbackupTest, unittest.TestCase):
             set_replication=True,
             initdb_params=["--data-checksums"],
         )
-
-        if self.get_version(master) < self.version_to_num("9.6.0"):
-            self.skipTest("Skipped because backup from replica is not supported in PG 9.5")
 
         self.init_pb(backup_dir)
         self.add_instance(backup_dir, "master", master)
