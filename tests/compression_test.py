@@ -1,6 +1,7 @@
 import os
 import unittest
-from .helpers.ptrack_helpers import ProbackupTest, ProbackupException
+
+from .helpers.ptrack_helpers import ProbackupException, ProbackupTest
 
 
 class CompressionTest(ProbackupTest, unittest.TestCase):
@@ -85,9 +86,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -105,9 +104,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -125,9 +122,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -211,9 +206,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -231,9 +224,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -251,9 +242,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -340,9 +329,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -360,9 +347,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -380,9 +365,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -469,9 +452,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -489,9 +470,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -509,9 +488,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -549,16 +526,15 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
             self.assertEqual(
                 1,
                 0,
-                "Expecting Error because compress-algorithm is invalid.\n "
-                "Output: {0} \n CMD: {1}".format(repr(self.output), self.cmd),
+                "Expecting Error because compress-algorithm is invalid.\n Output: {0} \n CMD: {1}".format(
+                    repr(self.output), self.cmd
+                ),
             )
         except ProbackupException as e:
             self.assertEqual(
                 e.message,
                 'ERROR: Invalid compress algorithm value "bla-blah"\n',
-                "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                    repr(e.message), self.cmd
-                ),
+                "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(e.message), self.cmd),
             )
 
     # @unittest.skip("skip")
@@ -690,9 +666,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -710,9 +684,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -730,9 +702,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -816,9 +786,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=full_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -836,9 +804,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=page_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -856,9 +822,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=delta_backup_id,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -944,9 +908,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
                 backup_id=backup_id_level12,
                 options=["-j", "4", "--immediate", "--recovery-target-action=promote"],
             ),
-            "\n Unexpected Error Message: {0}\n CMD: {1}".format(
-                repr(self.output), self.cmd
-            ),
+            "\n Unexpected Error Message: {0}\n CMD: {1}".format(repr(self.output), self.cmd),
         )
         node.slow_start()
 
@@ -1069,8 +1031,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         # Create data and make FULL backup with LZ4
         node.safe_psql(
             "postgres",
-            "create table t_heap as select i as id, md5(i::text) as text "
-            "from generate_series(0,10000) i",
+            "create table t_heap as select i as id, md5(i::text) as text from generate_series(0,10000) i",
         )
 
         full_backup_id = self.backup_node(
@@ -1087,8 +1048,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         # Make incremental backup
         node.safe_psql(
             "postgres",
-            "insert into t_heap select i as id, md5(i::text) as text "
-            "from generate_series(10000,20000) i",
+            "insert into t_heap select i as id, md5(i::text) as text from generate_series(10000,20000) i",
         )
 
         delta_backup_id = self.backup_node(
@@ -1229,8 +1189,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         # FULL backup with ZLIB
         node.safe_psql(
             "postgres",
-            "create table t_heap as select i as id, md5(i::text) as text "
-            "from generate_series(0,1000) i",
+            "create table t_heap as select i as id, md5(i::text) as text from generate_series(0,1000) i",
         )
 
         self.backup_node(
@@ -1244,8 +1203,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         # DELTA backup with LZ4
         node.safe_psql(
             "postgres",
-            "insert into t_heap select i as id, md5(i::text) as text "
-            "from generate_series(1000,2000) i",
+            "insert into t_heap select i as id, md5(i::text) as text from generate_series(1000,2000) i",
         )
 
         node.safe_psql("postgres", "delete from t_heap where id < 500")
@@ -1380,9 +1338,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         # Create table with repetitive data (highly compressible)
         node.safe_psql(
             "postgres",
-            "create table t_repetitive as select i as id, "
-            "repeat('A', 1000) as data "
-            "from generate_series(0,1000) i",
+            "create table t_repetitive as select i as id, repeat('A', 1000) as data from generate_series(0,1000) i",
         )
 
         empty_result = node.execute("postgres", "select count(*) from t_empty")[0][0]
@@ -1400,9 +1356,7 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
 
         # Make changes and DELTA backup
         node.safe_psql("postgres", "insert into t_empty values (1, 'test')")
-        node.safe_psql(
-            "postgres", "update t_sparse set data = 'updated' where id % 1000 = 0"
-        )
+        node.safe_psql("postgres", "update t_sparse set data = 'updated' where id % 1000 = 0")
 
         self.backup_node(
             backup_dir,
@@ -1426,8 +1380,6 @@ class CompressionTest(ProbackupTest, unittest.TestCase):
         )
         node.slow_start()
 
-        self.assertEqual(
-            empty_result, node.execute("postgres", "select count(*) from t_empty")[0][0]
-        )
+        self.assertEqual(empty_result, node.execute("postgres", "select count(*) from t_empty")[0][0])
         self.assertEqual(sparse_result, node.table_checksum("t_sparse"))
         self.assertEqual(repetitive_result, node.table_checksum("t_repetitive"))
