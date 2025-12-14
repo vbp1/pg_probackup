@@ -42,11 +42,19 @@ jobs:
             pg_branch: "REL_13_STABLE"
             ptrack_branch: "REL_13_STABLE"
             mode: "basic"
-          # Full tests for latest stable
+          # Full tests for latest stable (split into 3 parallel groups)
           - pg_version: "17"
             pg_branch: "REL_17_STABLE"
             ptrack_branch: "REL_17_STABLE"
-            mode: "full"
+            mode: "full-1"
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "full-2"
+          - pg_version: "17"
+            pg_branch: "REL_17_STABLE"
+            ptrack_branch: "REL_17_STABLE"
+            mode: "full-3"
 
     steps:
       - uses: actions/checkout@v4
@@ -161,8 +169,16 @@ jobs:
             export PG_PROBACKUP_TEST_BASIC=ON
             uv run pytest -v -n4 -k "test_basic"
             uv run pytest -v -n4 tests/init_test.py
-          elif [ "${{ matrix.mode }}" = "full" ]; then
-            uv run pytest -v -n4
+          elif [ "${{ matrix.mode }}" = "full-1" ]; then
+            # Group 1: backup, restore, validate (~147 tests)
+            uv run pytest -v -n4 tests/backup_test.py tests/restore_test.py tests/validate_test.py
+          elif [ "${{ matrix.mode }}" = "full-2" ]; then
+            # Group 2: ptrack, merge, incr_restore, archive (~160 tests)
+            uv run pytest -v -n4 tests/ptrack_test.py tests/merge_test.py tests/incr_restore_test.py tests/archive_test.py
+          elif [ "${{ matrix.mode }}" = "full-3" ]; then
+            # Group 3: all remaining tests
+            uv run pytest -v -n4 --ignore=tests/backup_test.py --ignore=tests/restore_test.py --ignore=tests/validate_test.py \
+              --ignore=tests/ptrack_test.py --ignore=tests/merge_test.py --ignore=tests/incr_restore_test.py --ignore=tests/archive_test.py
           else
             uv run pytest -v -n4 -k "${{ matrix.mode }}"
           fi
