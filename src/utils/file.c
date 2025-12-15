@@ -3808,7 +3808,7 @@ fio_communicate(int in, int out)
 			if (hdr.size > buf_size) {
 				/* Extend buffer on demand */
 				buf_size = hdr.size;
-				buf = (char*)realloc(buf, buf_size);
+				buf = (char*)pgut_realloc(buf, buf_size);
 			}
 			IO_CHECK(fio_read_all(in, buf, hdr.size), hdr.size);
 		}
@@ -3863,7 +3863,7 @@ fio_communicate(int in, int out)
 		  case FIO_READ: /* Read from the current position in file */
 			if ((size_t)hdr.arg > buf_size) {
 				buf_size = hdr.arg;
-				buf = (char*)realloc(buf, buf_size);
+				buf = (char*)pgut_realloc(buf, buf_size);
 			}
 			rc = read(fd[hdr.handle], buf, hdr.arg);
 			hdr.cop = FIO_SEND;
@@ -3999,7 +3999,7 @@ fio_communicate(int in, int out)
 				size_t filename_size = (size_t)hdr.size;
 				if (filename_size + hdr.arg > buf_size) {
 					buf_size = hdr.arg;
-					buf = (char*)realloc(buf, buf_size);
+					buf = (char*)pgut_realloc(buf, buf_size);
 				}
 				rc = readlink(buf, buf + filename_size, hdr.arg);
 				hdr.cop = FIO_READLINK;

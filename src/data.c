@@ -1651,6 +1651,7 @@ validate_file_pages(pgFile *file, const char *fullpath, XLogRecPtr stop_lsn,
 	if (!headers && file->n_headers > 0)
 	{
 		elog(WARNING, "Cannot get page headers for file \"%s\"", fullpath);
+		fclose(in);
 		return false;
 	}
 
@@ -1736,6 +1737,7 @@ validate_file_pages(pgFile *file, const char *fullpath, XLogRecPtr stop_lsn,
 		{
 			elog(WARNING, "Cannot read block %u file \"%s\": %s",
 				blknum, fullpath, strerror(errno));
+			fclose(in);
 			return false;
 		}
 
@@ -1763,6 +1765,7 @@ validate_file_pages(pgFile *file, const char *fullpath, XLogRecPtr stop_lsn,
 			{
 				elog(WARNING, "An error occured during decompressing block %u of file \"%s\": %s",
 					 blknum, fullpath, errormsg);
+				fclose(in);
 				return false;
 			}
 
@@ -1775,6 +1778,7 @@ validate_file_pages(pgFile *file, const char *fullpath, XLogRecPtr stop_lsn,
 				}
 				elog(WARNING, "Page %u of file \"%s\" uncompressed to %d bytes. != BLCKSZ",
 						blknum, fullpath, uncompressed_size);
+				fclose(in);
 				return false;
 			}
 
