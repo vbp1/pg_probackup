@@ -221,7 +221,8 @@ body {
   border-color: #DBDBCC;
   background-color: #EEEEDD;
   padding: 14px;
-  width: 572px;
+  max-width: 572px;
+  width: auto;
 /*  font-size: 12px; */
 }
 
@@ -418,4 +419,129 @@ table.CAUTION,
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+/* Responsive styles */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.book {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.book pre,
+.book .SCREEN,
+.book .SYNOPSIS,
+.book .PROGRAMLISTING {
+  overflow-x: auto;
+  word-wrap: normal;
+  white-space: pre;
+}
+
+.book table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+.book .cmdsynopsis {
+  overflow-x: auto;
+}
+
+/* Mobile styles */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+
+  .book {
+    font-size: 14px;
+    padding: 0 15px;
+  }
+
+  .book h1 {
+    font-size: 1.3em;
+  }
+
+  .book h2 {
+    font-size: 1.15em;
+  }
+
+  .book h3 {
+    font-size: 1.1em;
+  }
+
+  .book pre,
+  .book .SCREEN,
+  .book .SYNOPSIS,
+  .book .PROGRAMLISTING,
+  .book .REFSYNOPSISDIV p {
+    padding: 1.5ex;
+    margin: 1.5ex 0;
+    font-size: 12px;
+  }
+
+  .book blockquote.NOTE,
+  .book blockquote.TIP,
+  .book div.note,
+  .book div.tip {
+    max-width: 100%;
+    padding: 10px;
+    margin: 2ex 0;
+  }
+
+  table.CAUTION,
+  .book table.WARNING {
+    max-width: 100%;
+  }
+
+  .book div.SECT3 {
+    margin-left: 1.5ex;
+  }
+
+  .book table {
+    margin-left: 0;
+  }
+
+  .book dd {
+    margin-left: 20px;
+  }
+
+  .book .toc {
+    padding-left: 0;
+  }
+
+  .book .toc dl {
+    margin-left: 0;
+  }
+
+  .book .toc dd {
+    margin-left: 15px;
+  }
+}
+
+/* Small mobile styles */
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  .book {
+    font-size: 13px;
+    padding: 0 10px;
+  }
+
+  .book pre,
+  .book .SCREEN,
+  .book .SYNOPSIS,
+  .book .PROGRAMLISTING {
+    font-size: 11px;
+  }
 }
