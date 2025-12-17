@@ -1,7 +1,5 @@
 # pg_probackup Tests
 
-[See wiki](https://confluence.postgrespro.ru/display/DEV/pg_probackup)
-
 ## Requirements
 
 - Python 3.8+

@@ -25,48 +25,36 @@ As compared to other backup solutions, `pg_probackup` offers the following benef
 * Archive catalog: getting the list of all WAL timelines and the corresponding meta information in plain text or JSON formats
 * Partial Restore: restore only the specified databases or exclude the specified databases from restore.
 
-To manage backup data, `pg_probackup` creates a backup catalog. This directory stores all backup files with additional meta information, as well as WAL archives required for [point-in-time recovery](https://postgrespro.com/docs/postgresql/current/continuous-archiving.html). You can store backups for different instances in separate subdirectories of a single backup catalog.
+To manage backup data, `pg_probackup` creates a backup catalog. This directory stores all backup files with additional meta information, as well as WAL archives required for [point-in-time recovery](https://www.postgresql.org/docs/current/continuous-archiving.html). You can store backups for different instances in separate subdirectories of a single backup catalog.
 
 Using `pg_probackup`, you can take full or incremental backups:
 * `Full` backups contain all the data files required to restore the database cluster from scratch.
 * `Incremental` backups only store the data that has changed since the previous backup. It allows to decrease the backup size and speed up backup operations. `pg_probackup` supports the following modes of incremental backups:
   * `PAGE` backup. In this mode, `pg_probackup` scans all WAL files in the archive from the moment the previous full or incremental backup was taken. Newly created backups contain only the pages that were mentioned in WAL records. This requires all the WAL files since the previous backup to be present in the WAL archive. If the size of these files is comparable to the total size of the database cluster files, speedup is smaller, but the backup still takes less space.
   * `DELTA` backup. In this mode, `pg_probackup` read all data files in PGDATA directory and only those pages, that where changed since previous backup, are copied. Continuous archiving is not necessary for it to operate. Also this mode could impose read-only I/O pressure equal to `Full` backup.
-  * `PTRACK` backup. In this mode, PostgreSQL tracks page changes on the fly. Continuous archiving is not necessary for it to operate. Each time a relation page is updated, this page is marked in a special `PTRACK` bitmap for this relation. As one page requires just one bit in the `PTRACK` fork, such bitmaps are quite small. Tracking implies some minor overhead on the database server operation, but speeds up incremental backups significantly.
+  * `PTRACK` backup with [ptrack extension](https://github.com/postgrespro/ptrack). In this mode, PostgreSQL tracks page changes on the fly. Continuous archiving is not necessary for it to operate. Each time a relation page is updated, this page is marked in a special `PTRACK` bitmap for this relation. As one page requires just one bit in the `PTRACK` fork, such bitmaps are quite small. Tracking implies some minor overhead on the database server operation, but speeds up incremental backups significantly.
 
 Regardless of the chosen backup type, all backups taken with `pg_probackup` support the following strategies of WAL delivery:
 * `Autonomous backups` streams via replication protocol all the WAL files required to restore the cluster to a consistent state at the time the backup was taken. Even if continuous archiving is not set up, the required WAL segments are included into the backup.
 * `Archive backups` rely on continuous archiving.
 
-## ptrack support
-
-`PTRACK` backup support provided via following options:
-* vanilla PostgreSQL 13, 14, 15, 16, 17 with [ptrack extension](https://github.com/postgrespro/ptrack)
-* Postgres Pro Standard 13, 14, 15, 16, 17
-* Postgres Pro Enterprise 13, 14, 15, 16, 17
-
 ## Limitations
 
 `pg_probackup` currently has the following limitations:
-* The server from which the backup was taken and the restored server must be compatible by the [block_size](https://postgrespro.com/docs/postgresql/current/runtime-config-preset#GUC-BLOCK-SIZE) and [wal_block_size](https://postgrespro.com/docs/postgresql/current/runtime-config-preset#GUC-WAL-BLOCK-SIZE) parameters and have the same major release number.
+* The server from which the backup was taken and the restored server must be compatible by the [block_size](https://www.postgresql.org/docs/current/runtime-config-preset.html#GUC-BLOCK-SIZE) and [wal_block_size](https://www.postgresql.org/docs/current/runtime-config-preset.html#GUC-WAL-BLOCK-SIZE) parameters and have the same major release number.
 * Remote backup via ssh on Windows currently is not supported.
 * When running remote operations via ssh, remote and local pg_probackup versions must be the same.
 
 ## Documentation
 
-Documentation can be found at [github](https://postgrespro.github.io/pg_probackup) and [Postgres Professional documentation](https://postgrespro.com/docs/postgrespro/current/app-pgprobackup)
+Documentation can be found at [github](https://postgrespro.github.io/pg_probackup)
 
 ## Development
 
 * Stable version state can be found under the respective [release tag](https://github.com/postgrespro/pg_probackup/releases).
 * `master` branch contains minor fixes that are planned to the nearest minor release.
-* Upcoming major release is developed in a release branch i.e. `release_2_6`.
-
-For detailed release plans check [Milestones](https://github.com/postgrespro/pg_probackup/milestones)
 
 ## Installation and Setup
-### Windows Installation
-Installers are available in release **assets**. [Latests](https://github.com/postgrespro/pg_probackup/releases/latest).
 
 ### Linux Installation
 
@@ -74,7 +62,6 @@ See the [Installation](https://postgrespro.github.io/pg_probackup/#pbk-install) 
 
 Once you have `pg_probackup` installed, complete [the setup](https://postgrespro.github.io/pg_probackup/#pbk-setup).
 
-For users of Postgres Pro products, commercial editions of pg_probackup are available for installation from the corresponding Postgres Pro product repository.
 
 ## Building from source
 ### Linux
@@ -93,26 +80,13 @@ cd <path_to_PostgreSQL_source_tree> && git clone https://github.com/postgrespro/
 
 For version 18 you have to apply PostgreSQL core patch (patches/REL_18_STABLE_pg_probackup.patch) first and recompile and reinstall PostgreSQL
 
-### Windows
-
-Currently pg_probackup can be build using only MSVC 2013.
-Build PostgreSQL using [pgwininstall](https://github.com/postgrespro/pgwininstall) or [PostgreSQL instruction](https://www.postgresql.org/docs/current/install-windows-full.html) with MSVC 2013.
-If zlib support is needed, src/tools/msvc/config.pl must contain path to directory with compiled zlib. [Example](https://gist.githubusercontent.com/gsmol/80989f976ce9584824ae3b1bfb00bd87/raw/240032950d4ac4801a79625dd00c8f5d4ed1180c/gistfile1.txt)
-
-```shell
-CALL "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall" amd64
-SET PATH=%PATH%;C:\Perl64\bin
-SET PATH=%PATH%;C:\msys64\usr\bin
-gen_probackup_project.pl C:\path_to_postgresql_source_tree
-```
-
 ## License
 
 This module available under the [license](LICENSE) similar to [PostgreSQL](https://www.postgresql.org/about/license/).
 
 ## Feedback
 
-Do not hesitate to post your issues, questions and new ideas at the [issues](https://github.com/postgrespro/pg_probackup/issues) page.
+Do not hesitate to post your issues, questions and new ideas at the [issues](https://github.com/vbp1/pg_probackup/issues) page.
 
 ## Authors
 
@@ -134,4 +108,4 @@ Description of how to add new translation languages.
 6. Adding to nls.mk in folder pg_probackup required language in AVAIL_LANGUAGES.
 
 For more information, follow the link below:
-https://postgrespro.ru/docs/postgresql/12/nls-translator
+https://www.postgresql.org/docs/current/nls-translator.html
