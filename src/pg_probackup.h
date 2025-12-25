@@ -217,7 +217,12 @@ typedef enum CompressAlg
 	NONE_COMPRESS,
 	PGLZ_COMPRESS,
 	ZLIB_COMPRESS,
+	LZ4_COMPRESS,
 } CompressAlg;
+
+/* LZ4 compression level limits (LZ4_HC mode) */
+#define LZ4_COMPRESS_LEVEL_MIN 1
+#define LZ4_COMPRESS_LEVEL_MAX 12
 
 typedef enum ForkName
 {

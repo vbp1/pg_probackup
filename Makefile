@@ -50,8 +50,21 @@ include $(top_srcdir)/contrib/contrib-global.mk
 endif
 
 PG_CPPFLAGS = -I$(libpq_srcdir) ${PTHREAD_CFLAGS} -Isrc -I$(srchome)/$(subdir)/src
+
+# LZ4 compression library detection
+LZ4_LIBS =
+ifneq ($(shell pkg-config --exists liblz4 2>/dev/null && echo yes),)
+PG_CPPFLAGS += -DHAVE_LIBLZ4 $(shell pkg-config --cflags liblz4)
+LZ4_LIBS = $(shell pkg-config --libs liblz4)
+else
+ifneq ($(wildcard /usr/include/lz4.h),)
+PG_CPPFLAGS += -DHAVE_LIBLZ4
+LZ4_LIBS = -llz4
+endif
+endif
+
 override CPPFLAGS := -DFRONTEND $(CPPFLAGS) $(PG_CPPFLAGS)
-PG_LIBS_INTERNAL = $(libpq_pgport) ${PTHREAD_CFLAGS}
+PG_LIBS_INTERNAL = $(libpq_pgport) ${PTHREAD_CFLAGS} $(LZ4_LIBS)
 
 src/utils/configuration.o: src/datapagemap.h
 src/archive.o: src/instr_time.h

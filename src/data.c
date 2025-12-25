@@ -22,6 +22,11 @@
 #include <zlib.h>
 #endif
 
+#ifdef HAVE_LIBLZ4
+#include <lz4.h>
+#include <lz4hc.h>
+#endif
+
 #include "utils/thread.h"
 
 /* Union to ease operations on relation pages */
@@ -58,6 +63,45 @@ zlib_decompress(void *dst, size_t dst_size, void const *src, size_t src_size)
 }
 #endif
 
+#ifdef HAVE_LIBLZ4
+/*
+ * Implementation of LZ4 compression method.
+ * Uses LZ4_HC (high compression) mode when level is specified,
+ * otherwise uses fast LZ4 compression.
+ */
+static int32
+lz4_compress(void *dst, size_t dst_size, void const *src, size_t src_size,
+			 int level)
+{
+	int		compressed_size;
+
+	/*
+	 * Level 1-12: use LZ4_HC for better compression ratio.
+	 * Level 0 or unspecified: use fast LZ4_compress_default.
+	 */
+	if (level >= LZ4_COMPRESS_LEVEL_MIN && level <= LZ4_COMPRESS_LEVEL_MAX)
+		compressed_size = LZ4_compress_HC((const char *) src, (char *) dst,
+										  (int) src_size, (int) dst_size, level);
+	else
+		compressed_size = LZ4_compress_default((const char *) src, (char *) dst,
+											   (int) src_size, (int) dst_size);
+
+	return compressed_size > 0 ? compressed_size : -1;
+}
+
+/* Implementation of LZ4 decompression method */
+static int32
+lz4_decompress(void *dst, size_t dst_size, void const *src, size_t src_size)
+{
+	int		decompressed_size;
+
+	decompressed_size = LZ4_decompress_safe((const char *) src, (char *) dst,
+											(int) src_size, (int) dst_size);
+
+	return decompressed_size > 0 ? decompressed_size : -1;
+}
+#endif
+
 /*
  * Compresses source into dest using algorithm. Returns the number of bytes
  * written in the destination buffer, or -1 if compression fails.
@@ -83,6 +127,16 @@ do_compress(void *dst, size_t dst_size, void const *src, size_t src_size,
 #endif
 		case PGLZ_COMPRESS:
 			return pglz_compress(src, src_size, dst, PGLZ_strategy_always);
+#ifdef HAVE_LIBLZ4
+		case LZ4_COMPRESS:
+		{
+			int32 ret;
+			ret = lz4_compress(dst, dst_size, src, src_size, level);
+			if (ret < 0 && errormsg)
+				*errormsg = "LZ4 compression failed";
+			return ret;
+		}
+#endif
 	}
 
 	return -1;
@@ -119,6 +173,16 @@ do_decompress(void *dst, size_t dst_size, void const *src, size_t src_size,
 			return pglz_decompress(src, src_size, dst, dst_size, true);
 #else
 			return pglz_decompress(src, src_size, dst, dst_size);
+#endif
+#ifdef HAVE_LIBLZ4
+		case LZ4_COMPRESS:
+		{
+			int32 ret;
+			ret = lz4_decompress(dst, dst_size, src, src_size);
+			if (ret < 0 && errormsg)
+				*errormsg = "LZ4 decompression failed";
+			return ret;
+		}
 #endif
 	}
 
